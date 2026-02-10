@@ -1,0 +1,186 @@
+<div style="min-height: 100vh; background: #ffffff; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+  
+  <!-- Header Premium -->
+  <header style="background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.95) 100%); border-bottom: 1px solid rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 50; backdrop-filter: blur(20px);">
+    <div style="max-width: 1400px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button
+          (click)="goBack()"
+          style="padding: 8px 12px; background: rgba(99,102,241,0.1); border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: all 0.2s;"
+          onmouseover="this.style.background='rgba(99,102,241,0.2)'; this.style.transform='scale(1.05)'"
+          onmouseout="this.style.background='rgba(99,102,241,0.1)'; this.style.transform='scale(1)'">
+          ← Atrás
+        </button>
+        <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(99,102,241,0.4), inset 0 1px 0 rgba(255,255,255,0.2);">
+          <svg style="width: 20px; height: 20px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4a4 4 0 100 8 4 4 0 000-8zM12 14c-5 0-7 3-7 5v3h14v-3c0-2-2-5-7-5z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 style="margin: 0; font-size: 18px; font-weight: 700; color: #1e293b; letter-spacing: -0.5px;">Gestión de Usuarios</h1>
+          <p style="margin: 2px 0 0; font-size: 11px; color: #64748b; font-weight: 500;">Administra los usuarios del sistema</p>
+        </div>
+      </div>
+
+      <button
+        (click)="openCreateUserModal()"
+        style="padding: 8px 16px; font-size: 11px; font-weight: 700; color: white; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(99,102,241,0.3); white-space: nowrap;"
+        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(99,102,241,0.4)'"
+        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.3)'">
+        ➕ Crear Usuario
+      </button>
+    </div>
+  </header>
+
+  <main style="max-width: 1400px; margin: 0 auto; padding: 24px 20px;">
+    
+    <!-- Error Message -->
+    @if (error && !loading) {
+      <div style="margin-bottom: 24px; padding: 14px 16px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); border-radius: 12px; display: flex; align-items: flex-start; gap: 10px; animation: slideDown 0.2s ease;">
+        <span style="font-size: 18px; flex-shrink: 0;">⚠️</span>
+        <span style="font-size: 12px; font-weight: 600; color: #dc2626;">{{ error }}</span>
+      </div>
+    }
+
+    <!-- Loading State -->
+    @if (loading) {
+      <div style="display: flex; align-items: center; justify-content: center; min-height: 400px;">
+        <div style="text-align: center;">
+          <div style="width: 48px; height: 48px; margin: 0 auto 16px; border: 3px solid rgba(99,102,241,0.2); border-top-color: #6366f1; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+          <p style="margin: 0; font-size: 13px; font-weight: 600; color: #64748b;">Cargando usuarios...</p>
+        </div>
+      </div>
+    }
+
+    <!-- Empty State -->
+    @if (!loading && users.length === 0) {
+      <div style="text-align: center; padding: 40px 20px; background: rgba(99,102,241,0.05); border-radius: 16px; border: 1px dashed rgba(99,102,241,0.3);">
+        <div style="font-size: 32px; margin-bottom: 12px;">👥</div>
+        <h3 style="margin: 0 0 8px; font-size: 16px; font-weight: 700; color: #1e293b;">No hay usuarios</h3>
+        <p style="margin: 0 0 16px; font-size: 12px; color: #64748b;">Crea el primer usuario para comenzar</p>
+        <button
+          (click)="openCreateUserModal()"
+          style="padding: 8px 16px; font-size: 11px; font-weight: 700; color: white; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+          ➕ Crear Usuario
+        </button>
+      </div>
+    }
+
+    <!-- Users Table -->
+    @if (!loading && users.length > 0) {
+      <div style="background: white; border: 1px solid rgba(0,0,0,0.1); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+        
+        <!-- Table Header -->
+        <div style="background: linear-gradient(180deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.6) 100%); border-bottom: 1px solid rgba(0,0,0,0.1); padding: 16px 20px; display: grid; grid-template-columns: 1fr 2fr 1fr 1fr; gap: 16px; align-items: center;">
+          <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">ID</div>
+          <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Nombre de Usuario</div>
+          <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Fecha Creación</div>
+          <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; text-align: right;">Acciones</div>
+        </div>
+
+        <!-- Table Rows -->
+        @for (user of users; track user.id) {
+          <div
+            style="padding: 16px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: grid; grid-template-columns: 1fr 2fr 1fr 1fr; gap: 16px; align-items: center; transition: all 0.2s;"
+            onmouseover="this.style.background='rgba(99,102,241,0.05)'"
+            onmouseout="this.style.background='transparent'">
+            
+            <!-- ID -->
+            <div style="font-size: 13px; font-weight: 600; color: #1e293b;">#{{ user.id }}</div>
+            
+            <!-- Nombre Usuario -->
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: #1e293b;">{{ user.nombreUsuario }}</div>
+              <div style="font-size: 11px; color: #64748b; margin-top: 4px;">
+                <span style="display: inline-block; padding: 2px 8px; background: rgba(34,197,94,0.15); color: #16a34a; border-radius: 4px; font-weight: 600;">
+                  {{ user.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </div>
+            </div>
+            
+            <!-- Fecha Creación -->
+            <div style="font-size: 12px; color: #64748b; font-weight: 500;">{{ formatDate(user.fechaCreacion) }}</div>
+            
+            <!-- Acciones -->
+            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+              <button
+                (click)="confirmDelete(user)"
+                style="padding: 6px 12px; font-size: 11px; font-weight: 700; color: #dc2626; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; cursor: pointer; transition: all 0.2s;"
+                onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.transform='scale(1.05)'"
+                onmouseout="this.style.background='rgba(239,68,68,0.1)'; this.style.transform='scale(1)'">
+                🗑️ Eliminar
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </main>
+
+  <!-- Delete Confirmation Modal -->
+  @if (showDeleteConfirm && selectedUserForDelete) {
+    <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; animation: fadeIn 0.2s ease;">
+      <div style="background: white; border-radius: 16px; padding: 32px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: slideUp 0.2s ease;">
+        
+        <div style="text-align: center; margin-bottom: 24px;">
+          <div style="font-size: 32px; margin-bottom: 12px;">⚠️</div>
+          <h2 style="margin: 0; font-size: 18px; font-weight: 700; color: #1e293b;">Eliminar Usuario</h2>
+          <p style="margin: 8px 0 0; font-size: 12px; color: #64748b;">¿Estás seguro de que deseas eliminar a <strong>{{ selectedUserForDelete.nombreUsuario }}</strong>?</p>
+          <p style="margin: 8px 0 0; font-size: 11px; color: #f87171;">Esta acción no se puede deshacer</p>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button
+            (click)="cancelDelete()"
+            [disabled]="deleting"
+            style="flex: 1; padding: 12px; font-size: 12px; font-weight: 700; color: #6366f1; background: rgba(99,102,241,0.1); border: 1.5px solid rgba(99,102,241,0.3); border-radius: 10px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; opacity: {{ deleting ? 0.5 : 1 }};"
+            onmouseover="if(!this.disabled) { this.style.background='rgba(99,102,241,0.2)'; this.style.transform='translateY(-2px)'; }"
+            onmouseout="if(!this.disabled) { this.style.background='rgba(99,102,241,0.1)'; this.style.transform='translateY(0)'; }">
+            Cancelar
+          </button>
+          <button
+            (click)="deleteUser()"
+            [disabled]="deleting"
+            style="flex: 1; padding: 12px; font-size: 12px; font-weight: 700; color: white; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(220,38,38,0.3); opacity: {{ deleting ? 0.6 : 1 }};"
+            onmouseover="if(!this.disabled) { this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(220,38,38,0.4)'; }"
+            onmouseout="if(!this.disabled) { this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(220,38,38,0.3)'; }">
+            {{ deleting ? 'Eliminando...' : 'Eliminar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <style>
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</div>

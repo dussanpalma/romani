@@ -1,0 +1,9 @@
+/* Student Form Page Styles */
+:host {
+  display: block;
+}
+
+input:focus {
+  border-color: #6366f1 !important;
+  background: white !important;
+}

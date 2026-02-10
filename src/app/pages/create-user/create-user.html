@@ -1,0 +1,160 @@
+<div style="min-height: 100vh; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); display: flex; align-items: center; justify-content: center; padding: 16px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+  
+  <div style="background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); padding: 40px; max-width: 420px; width: 100%; animation: slideUp 0.3s ease;">
+    
+    <!-- Header -->
+    <div style="margin-bottom: 32px; text-align: center;">
+      <div style="width: 60px; height: 60px; margin: 0 auto 16px; border-radius: 16px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(99,102,241,0.4);">
+        <svg style="width: 32px; height: 32px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4a4 4 0 100 8 4 4 0 000-8zM12 14c-5 0-7 3-7 5v3h14v-3c0-2-2-5-7-5z"></path>
+        </svg>
+      </div>
+      <h1 style="margin: 0; font-size: 24px; font-weight: 800; color: #1e293b; letter-spacing: -0.5px;">Crear Usuario</h1>
+      <p style="margin: 8px 0 0; font-size: 13px; color: #64748b; font-weight: 500;">Crea un nuevo usuario para acceder al sistema</p>
+    </div>
+
+    <!-- Success Message -->
+    @if (success) {
+      <div style="margin-bottom: 24px; padding: 14px 16px; background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); border-radius: 12px; display: flex; align-items: center; gap: 10px; animation: slideDown 0.2s ease;">
+        <span style="font-size: 18px;">✓</span>
+        <span style="font-size: 12px; font-weight: 600; color: #16a34a;">Usuario creado exitosamente. Redirigiendo...</span>
+      </div>
+    }
+
+    <!-- Error Message -->
+    @if (error) {
+      <div style="margin-bottom: 24px; padding: 14px 16px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); border-radius: 12px; display: flex; align-items: flex-start; gap: 10px; animation: slideDown 0.2s ease;">
+        <span style="font-size: 18px; flex-shrink: 0;">!</span>
+        <span style="font-size: 12px; font-weight: 600; color: #dc2626;">{{ error }}</span>
+      </div>
+    }
+
+    <!-- Form -->
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" style="display: flex; flex-direction: column; gap: 18px;">
+      
+      <!-- Username Field -->
+      <div>
+        <label style="display: block; margin-bottom: 8px; font-size: 12px; font-weight: 700; color: #1e293b; text-transform: uppercase; letter-spacing: 0.5px;">Nombre de Usuario</label>
+        <input
+          type="text"
+          formControlName="nombreUsuario"
+          placeholder="ejemplo_usuario"
+          style="width: 100%; padding: 12px 14px; font-size: 13px; border: 1.5px solid rgba(0,0,0,0.1); border-radius: 10px; background: rgba(255,255,255,0.95); transition: all 0.2s; outline: none; box-sizing: border-box;"
+          onmouseover="this.style.borderColor='rgba(99,102,241,0.3)'; this.style.background='rgba(255,255,255,1)'"
+          onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)'"
+          onblur="this.style.borderColor='rgba(0,0,0,0.1)'; this.style.boxShadow='none'"
+          onmouseout="if(document.activeElement !== this) { this.style.borderColor='rgba(0,0,0,0.1)'; this.style.background='rgba(255,255,255,0.95)'; }"/>
+        
+        @if (userForm.get('nombreUsuario')?.hasError('required') && userForm.get('nombreUsuario')?.touched) {
+          <span style="display: block; margin-top: 6px; font-size: 11px; color: #dc2626; font-weight: 500;">El nombre de usuario es requerido</span>
+        }
+        @if (userForm.get('nombreUsuario')?.hasError('minlength') && userForm.get('nombreUsuario')?.touched) {
+          <span style="display: block; margin-top: 6px; font-size: 11px; color: #dc2626; font-weight: 500;">Mínimo 3 caracteres</span>
+        }
+      </div>
+
+      <!-- Password Field -->
+      <div>
+        <label style="display: block; margin-bottom: 8px; font-size: 12px; font-weight: 700; color: #1e293b; text-transform: uppercase; letter-spacing: 0.5px;">Contraseña</label>
+        <div style="position: relative;">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="contraseña"
+            placeholder="••••••••"
+            style="width: 100%; padding: 12px 14px; padding-right: 40px; font-size: 13px; border: 1.5px solid rgba(0,0,0,0.1); border-radius: 10px; background: rgba(255,255,255,0.95); transition: all 0.2s; outline: none; box-sizing: border-box;"
+            onmouseover="this.style.borderColor='rgba(99,102,241,0.3)'; this.style.background='rgba(255,255,255,1)'"
+            onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)'"
+            onblur="this.style.borderColor='rgba(0,0,0,0.1)'; this.style.boxShadow='none'"
+            onmouseout="if(document.activeElement !== this) { this.style.borderColor='rgba(0,0,0,0.1)'; this.style.background='rgba(255,255,255,0.95)'; }"/>
+          <button
+            type="button"
+            (click)="togglePasswordVisibility()"
+            style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #6366f1; font-size: 16px; padding: 4px 8px;">
+            {{ showPassword ? '👁️' : '👁️‍🗨️' }}
+          </button>
+        </div>
+        
+        @if (userForm.get('contraseña')?.hasError('required') && userForm.get('contraseña')?.touched) {
+          <span style="display: block; margin-top: 6px; font-size: 11px; color: #dc2626; font-weight: 500;">La contraseña es requerida</span>
+        }
+        @if (userForm.get('contraseña')?.hasError('minlength') && userForm.get('contraseña')?.touched) {
+          <span style="display: block; margin-top: 6px; font-size: 11px; color: #dc2626; font-weight: 500;">Mínimo 6 caracteres</span>
+        }
+      </div>
+
+      <!-- Confirm Password Field -->
+      <div>
+        <label style="display: block; margin-bottom: 8px; font-size: 12px; font-weight: 700; color: #1e293b; text-transform: uppercase; letter-spacing: 0.5px;">Confirmar Contraseña</label>
+        <div style="position: relative;">
+          <input
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            formControlName="confirmarContraseña"
+            placeholder="••••••••"
+            style="width: 100%; padding: 12px 14px; padding-right: 40px; font-size: 13px; border: 1.5px solid rgba(0,0,0,0.1); border-radius: 10px; background: rgba(255,255,255,0.95); transition: all 0.2s; outline: none; box-sizing: border-box;"
+            onmouseover="this.style.borderColor='rgba(99,102,241,0.3)'; this.style.background='rgba(255,255,255,1)'"
+            onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)'"
+            onblur="this.style.borderColor='rgba(0,0,0,0.1)'; this.style.boxShadow='none'"
+            onmouseout="if(document.activeElement !== this) { this.style.borderColor='rgba(0,0,0,0.1)'; this.style.background='rgba(255,255,255,0.95)'; }"/>
+          <button
+            type="button"
+            (click)="toggleConfirmPasswordVisibility()"
+            style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #6366f1; font-size: 16px; padding: 4px 8px;">
+            {{ showConfirmPassword ? '👁️' : '👁️‍🗨️' }}
+          </button>
+        </div>
+        
+        @if (userForm.get('confirmarContraseña')?.hasError('required') && userForm.get('confirmarContraseña')?.touched) {
+          <span style="display: block; margin-top: 6px; font-size: 11px; color: #dc2626; font-weight: 500;">Debes confirmar la contraseña</span>
+        }
+        @if (userForm.hasError('passwordMismatch') && userForm.get('confirmarContraseña')?.touched) {
+          <span style="display: block; margin-top: 6px; font-size: 11px; color: #dc2626; font-weight: 500;">Las contraseñas no coinciden</span>
+        }
+      </div>
+
+      <!-- Buttons -->
+      <div style="display: flex; gap: 10px; margin-top: 24px;">
+        <button
+          type="button"
+          (click)="onCancel()"
+          [disabled]="loading"
+          style="flex: 1; padding: 12px; font-size: 12px; font-weight: 700; color: #6366f1; background: rgba(99,102,241,0.1); border: 1.5px solid rgba(99,102,241,0.3); border-radius: 10px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; opacity: {{ loading ? 0.5 : 1 }};"
+          onmouseover="if(!this.disabled) { this.style.background='rgba(99,102,241,0.2)'; this.style.transform='translateY(-2px)'; }"
+          onmouseout="if(!this.disabled) { this.style.background='rgba(99,102,241,0.1)'; this.style.transform='translateY(0)'; }">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          [disabled]="!userForm.valid || loading"
+          style="flex: 1; padding: 12px; font-size: 12px; font-weight: 700; color: white; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(99,102,241,0.3); opacity: {{ (!userForm.valid || loading) ? 0.6 : 1 }};"
+          onmouseover="if(!this.disabled) { this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(99,102,241,0.4)'; }"
+          onmouseout="if(!this.disabled) { this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.3)'; }">
+          {{ loading ? 'Creando...' : 'Crear Usuario' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <style>
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</div>

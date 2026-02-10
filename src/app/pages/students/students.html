@@ -1,0 +1,175 @@
+<div style="min-height: 100vh; background: #ffffff; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+  
+  <!-- Header Premium -->
+  <header style="background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.95) 100%); border-bottom: 1px solid rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 50; backdrop-filter: blur(20px);">
+    <div style="max-width: 1400px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(99,102,241,0.4), inset 0 1px 0 rgba(255,255,255,0.2);">
+          <svg style="width: 20px; height: 20px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 style="margin: 0; font-size: 18px; font-weight: 700; color: #1e293b; letter-spacing: -0.5px;">Centro de Contactos</h1>
+          <p style="margin: 2px 0 0; font-size: 11px; color: #64748b; font-weight: 500;">Gestión de estudiantes</p>
+        </div>
+      </div>
+      
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <!-- Stats Cards -->
+        <div style="display: flex; gap: 10px;">
+          <div style="padding: 8px 14px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); border-radius: 10px; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 12px; color: #4f46e5; font-weight: 500;">Total</span>
+            <span style="font-size: 16px; font-weight: 800; color: #1e293b;">{{ all.length }}</span>
+          </div>
+          <div style="padding: 8px 14px; background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); border-radius: 10px; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 12px; color: #16a34a; font-weight: 500;">Filtrados</span>
+            <span style="font-size: 16px; font-weight: 800; color: #1e293b;">{{ (filtered || all).length }}</span>
+          </div>
+        </div>
+
+        <!-- Notification Bell -->
+        <app-notification-bell></app-notification-bell>
+
+        <!-- Menu de 3 puntos -->
+        <div style="position: relative;" (document:click)="showActionsMenu = false" (click)="$event.stopPropagation()">
+          <button
+            (click)="showActionsMenu = !showActionsMenu"
+            style="padding: 8px 12px; font-size: 18px; font-weight: 700; color: #6366f1; background: rgba(99,102,241,0.1); border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(99,102,241,0.2); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;"
+            onmouseover="this.style.background='rgba(99,102,241,0.2)'; this.style.transform='scale(1.05)'"
+            onmouseout="this.style.background='rgba(99,102,241,0.1)'; this.style.transform='scale(1)'">
+            ⋯
+          </button>
+
+          <!-- Dropdown Menu -->
+          @if (showActionsMenu) {
+            <div style="position: absolute; right: 0; top: 100%; margin-top: 6px; background: white; border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); min-width: 200px; z-index: 100; overflow: hidden;">
+              
+              <!-- Crear Estudiante -->
+              <button
+                (click)="openNewForm(); showActionsMenu = false"
+                style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; font-size: 13px; font-weight: 600; color: #6366f1; background: transparent; border: none; border-bottom: 1px solid rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s; text-align: left;"
+                onmouseover="this.style.background='rgba(99,102,241,0.08)'"
+                onmouseout="this.style.background='transparent'">
+                <span style="font-size: 16px;">➕</span>
+                <span>Crear Estudiante</span>
+              </button>
+
+              <!-- Crear Usuario -->
+              <button
+                (click)="openCreateUser(); showActionsMenu = false"
+                style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; font-size: 13px; font-weight: 600; color: #8b5cf6; background: transparent; border: none; border-bottom: 1px solid rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s; text-align: left;"
+                onmouseover="this.style.background='rgba(139,92,246,0.08)'"
+                onmouseout="this.style.background='transparent'">
+                <span style="font-size: 16px;">👤</span>
+                <span>Crear Usuario</span>
+              </button>
+
+              <!-- Gestionar Usuarios -->
+              <button
+                (click)="openUsersManagement(); showActionsMenu = false"
+                style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; font-size: 13px; font-weight: 600; color: #a855f7; background: transparent; border: none; border-bottom: 1px solid rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s; text-align: left;"
+                onmouseover="this.style.background='rgba(168,85,247,0.08)'"
+                onmouseout="this.style.background='transparent'">
+                <span style="font-size: 16px;">⚙️</span>
+                <span>Gestionar Usuarios</span>
+              </button>
+
+              <!-- Salir -->
+              <button
+                (click)="onLogout(); showActionsMenu = false"
+                style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; font-size: 13px; font-weight: 600; color: #ef4444; background: transparent; border: none; cursor: pointer; transition: all 0.2s; text-align: left;"
+                onmouseover="this.style.background='rgba(239,68,68,0.08)'"
+                onmouseout="this.style.background='transparent'">
+                <span style="font-size: 16px;">🚪</span>
+                <span>Salir</span>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main style="max-width: 1400px; margin: 0 auto; padding: 16px 20px;">
+    
+    <!-- Leyenda de colores - Premium -->
+    <div style="margin-bottom: 14px; padding: 12px 16px; background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.6) 100%); border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); display: flex; flex-wrap: wrap; align-items: center; gap: 16px; backdrop-filter: blur(10px);">
+      <span style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.8px;">Estados</span>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 12px rgba(239,68,68,0.5);"></span>
+        <span style="font-size: 11px; color: #1e293b; font-weight: 500;">No llamar</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #FFD700; box-shadow: 0 0 12px rgba(255,215,0,0.5);"></span>
+        <span style="font-size: 11px; color: #1e293b; font-weight: 500;">Tiene cita</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 12px rgba(34,197,94,0.5);"></span>
+        <span style="font-size: 11px; color: #1e293b; font-weight: 500;">Nuevo contacto</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #a855f7; box-shadow: 0 0 12px rgba(168,85,247,0.5);"></span>
+        <span style="font-size: 11px; color: #1e293b; font-weight: 500;">Estudiante antiguo</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #ff8c42; box-shadow: 0 0 12px rgba(255,140,66,0.5);"></span>
+        <span style="font-size: 11px; color: #1e293b; font-weight: 500;">Pendiente</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; box-shadow: 0 0 12px rgba(59,130,246,0.5);"></span>
+        <span style="font-size: 11px; color: #1e293b; font-weight: 500;">Ya es estudiante</span>
+      </div>
+    </div>
+
+    <!-- Buscador -->
+    <section style="margin-bottom: 12px;">
+      <app-student-search (search)="onSearch($event)"></app-student-search>
+    </section>
+
+    <!-- Alerta: Estudiantes con fecha próxima a terminar -->
+    @if (studentsWithUpcomingCourseEnd.length > 0) {
+      <div style="margin-bottom: 16px; padding: 16px 20px; background: linear-gradient(135deg, rgba(245,158,11,0.1) 0%, rgba(245,158,11,0.05) 100%); border: 2px solid #f59e0b; border-radius: 12px; backdrop-filter: blur(10px);">
+        <div style="display: flex; align-items: flex-start; gap: 14px;">
+          <span style="font-size: 24px; flex-shrink: 0;">⏰</span>
+          <div style="flex: 1;">
+            <h3 style="margin: 0 0 6px 0; font-size: 14px; font-weight: 700; color: #b45309;">
+              {{ studentsWithUpcomingCourseEnd.length }} estudiante{{ studentsWithUpcomingCourseEnd.length !== 1 ? 's' : '' }} próximo{{ studentsWithUpcomingCourseEnd.length !== 1 ? 's' : '' }} a terminar
+            </h3>
+            <p style="margin: 0; font-size: 12px; color: #92400e; line-height: 1.5;">
+              Los siguientes estudiantes tienen su fecha de terminación en los próximos 7 días:
+              <strong>
+                @for (s of studentsWithUpcomingCourseEnd | slice:0:3; track s.id; let last = $last) {
+                  <span>{{ s.nombre }}<span>{{ !last ? ', ' : '' }}</span></span>
+                }
+                @if (studentsWithUpcomingCourseEnd.length > 3) {
+                  <span> y {{ studentsWithUpcomingCourseEnd.length - 3 }} más</span>
+                }
+              </strong>
+            </p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Filtros -->
+    <section style="margin-bottom: 14px;">
+      <app-student-filters 
+        (filterChange)="onFilterChange($event)"
+        [activeFilters]="activeFilters">
+      </app-student-filters>
+    </section>
+
+    <!-- Contenido principal - Tabla centrada sin formulario -->
+    <div style="display: flex; justify-content: center; width: 100%;">
+      <div style="width: 100%; max-width: 1200px;">
+        <app-student-list 
+          [students]="filtered ?? all"
+          (edit)="onEditStudent($event)"
+          (addComment)="onAddComment($event)">
+        </app-student-list>
+      </div>
+    </div>
+  </main>
+</div>
+

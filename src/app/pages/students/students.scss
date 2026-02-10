@@ -1,0 +1,19 @@
+// Animación para el dropdown menu
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:host {
+  ::ng-deep {
+    [style*="animation: slideDown"] {
+      animation: slideDown 0.2s ease;
+    }
+  }
+}

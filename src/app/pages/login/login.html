@@ -1,0 +1,157 @@
+<div style="min-height: 100vh; background: linear-gradient(135deg, #ffffff 0%, #f9fafb 50%, #f3f4f6 100%); display: flex; align-items: center; justify-content: center; padding: 16px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+  
+  <div style="width: 100%; max-width: 380px;">
+    
+    <!-- Card Login -->
+    <div style="background: white; border-radius: 20px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06); overflow: hidden;">
+      
+      <!-- Header Gradient -->
+      <div style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%); padding: 32px 20px 24px; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -40px; right: -40px; width: 150px; height: 150px; background: rgba(255, 255, 255, 0.15); border-radius: 50%; pointer-events: none;"></div>
+        <div style="position: absolute; bottom: -25px; left: -25px; width: 100px; height: 100px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; pointer-events: none;"></div>
+        
+        <div style="width: 60px; height: 60px; border-radius: 14px; background: rgba(255, 255, 255, 0.25); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; backdrop-filter: blur(20px); font-size: 32px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);">
+          👥
+        </div>
+        <h1 style="margin: 0 0 4px; font-size: 24px; font-weight: 800; color: white; letter-spacing: -0.6px;">Centro de Contactos</h1>
+        <p style="margin: 0; font-size: 12px; color: rgba(255, 255, 255, 0.9); font-weight: 500;">Gestión de estudiantes</p>
+      </div>
+
+      <!-- Main Content -->
+      <div style="padding: 28px 24px;">
+        
+        <!-- Error Message -->
+        @if (errorMessage) {
+          <div style="margin-bottom: 14px; padding: 12px 14px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(239, 68, 68, 0.04) 100%); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 10px; display: flex; align-items: flex-start; gap: 10px; animation: slideDown 0.3s ease; font-size: 12px;">
+            <span style="font-size: 18px; flex-shrink: 0; margin-top: 1px;">❌</span>
+            <div style="flex: 1;">
+              <p style="margin: 0; font-weight: 600; color: #dc2626; line-height: 1.4;">{{ errorMessage }}</p>
+              @if (hasError) {
+                <p style="margin: 6px 0 0; font-size: 11px; color: #991b1b; opacity: 0.8;">Revisa tus credenciales e intenta nuevamente</p>
+              }
+            </div>
+            <button (click)="clearError()" style="background: none; border: none; cursor: pointer; color: #dc2626; font-size: 16px; padding: 0; display: flex; align-items: center; flex-shrink: 0; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">✕</button>
+          </div>
+        }
+
+        <!-- Form -->
+        <form (ngSubmit)="login()" style="display: flex; flex-direction: column; gap: 12px;">
+          
+          <!-- Username Field -->
+          <div>
+            <label style="display: block; font-size: 11px; font-weight: 700; color: #1e293b; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">👤 Usuario</label>
+            <input
+              [(ngModel)]="username"
+              name="username"
+              type="text"
+              placeholder="usuario@ejemplo.com"
+              (keypress)="onKeyPress($event)"
+              (focus)="onInputFocus()"
+              [disabled]="isLoading"
+              style="width: 100%; padding: 10px 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 13px; background: #f8fafc; color: #1e293b; outline: none; box-sizing: border-box; transition: all 0.3s; font-family: inherit; font-weight: 500;"
+              onmouseover="!this.disabled && (this.style.borderColor='#cbd5e1', this.style.background='#ffffff', this.style.boxShadow='0 4px 12px rgba(0,0,0,0.05)')"
+              onmouseout="!this.disabled && (this.style.borderColor='#e2e8f0', this.style.background='#f8fafc', this.style.boxShadow='none')"
+              onfocus="this.style.borderColor='#6366f1'; this.style.background='#ffffff'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)'"
+              onblur="this.style.borderColor='#e2e8f0'; this.style.background='#f8fafc'; this.style.boxShadow='none'"
+            />
+          </div>
+
+          <!-- Password Field -->
+          <div>
+            <label style="display: block; font-size: 11px; font-weight: 700; color: #1e293b; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">🔒 Contraseña</label>
+            <div style="position: relative; display: flex; align-items: center;">
+              <input
+                [(ngModel)]="password"
+                name="password"
+                [type]="showPassword ? 'text' : 'password'"
+                placeholder="••••••••"
+                (keypress)="onKeyPress($event)"
+                (focus)="onInputFocus()"
+                [disabled]="isLoading"
+                style="width: 100%; padding: 10px 12px; padding-right: 38px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 13px; background: #f8fafc; color: #1e293b; outline: none; box-sizing: border-box; transition: all 0.3s; font-family: inherit; font-weight: 500;"
+                onmouseover="!this.disabled && (this.style.borderColor='#cbd5e1', this.style.background='#ffffff', this.style.boxShadow='0 4px 12px rgba(0,0,0,0.05)')"
+                onmouseout="!this.disabled && (this.style.borderColor='#e2e8f0', this.style.background='#f8fafc', this.style.boxShadow='none')"
+                onfocus="this.style.borderColor='#6366f1'; this.style.background='#ffffff'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)'"
+                onblur="this.style.borderColor='#e2e8f0'; this.style.background='#f8fafc'; this.style.boxShadow='none'"
+              />
+              <button
+                type="button"
+                (click)="togglePasswordVisibility()"
+                [disabled]="isLoading"
+                style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; font-size: 16px; color: #64748b; padding: 4px 6px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; opacity: 0.7;"
+                onmouseover="this.style.opacity='1'"
+                onmouseout="this.style.opacity='0.7'"
+              >
+                {{ showPassword ? '👁️' : '👁️‍🗨️' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            [disabled]="isLoading && !hasError"
+            style="width: 100%; padding: 11px 14px; margin-top: 6px; border: none; border-radius: 10px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.25); display: flex; align-items: center; justify-content: center; gap: 6px; letter-spacing: 0.2px;"
+            [style.opacity]="isLoading && !hasError ? '0.75' : '1'"
+            [style.cursor]="isLoading && !hasError ? 'not-allowed' : 'pointer'"
+            onmouseover="!this.disabled && (this.style.transform='translateY(-2px)', this.style.boxShadow='0 15px 35px rgba(99, 102, 241, 0.35)')"
+            onmouseout="this.style.transform='translateY(0)', this.style.boxShadow='0 10px 25px rgba(99, 102, 241, 0.25)'"
+          >
+            @if (isLoading && !hasError) {
+              <div style="width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite;"></div>
+              <span>Ingresando...</span>
+            } @else {
+              <span>{{ hasError ? 'Reintentar' : 'Ingresar' }}</span>
+            }
+          </button>
+
+          <!-- Cancel Button (shown only when there's an error) -->
+          @if (hasError) {
+            <button
+              type="button"
+              (click)="cancelLogin()"
+              style="width: 100%; padding: 11px 14px; margin-top: 8px; border: 2px solid #64748b; border-radius: 10px; background: transparent; color: #64748b; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px; letter-spacing: 0.2px;"
+              onmouseover="this.style.background='rgba(100,116,139,0.08)'; this.style.borderColor='#475569'"
+              onmouseout="this.style.background='transparent'; this.style.borderColor='#64748b'">
+              <span>Limpiar</span>
+            </button>
+          }
+        </form>
+
+        <!-- Divider -->
+        <div style="margin: 16px 0; display: flex; align-items: center; gap: 8px;">
+          <div style="flex: 1; height: 1px; background: linear-gradient(to right, transparent, #e2e8f0, transparent);"></div>
+          <div style="flex: 1; height: 1px; background: linear-gradient(to left, transparent, #e2e8f0, transparent);"></div>
+        </div>
+
+
+      </div>
+
+      <!-- Footer -->
+      <div style="padding: 10px 24px; background: #f9fafb; border-top: 1px solid #e2e8f0; text-align: center;">
+        <p style="margin: 0; font-size: 10px; color: #64748b; font-weight: 500;">
+          © 2026 <span style="font-weight: 700; color: #1e293b;">Palma Inc.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</div>

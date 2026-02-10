@@ -1,0 +1,277 @@
+<!-- Modal Overlay -->
+@if (isOpen) {
+  <div 
+    style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px;"
+    (click)="onClose()">
+    
+    <!-- Modal Content -->
+    <div 
+      style="background: white; border-radius: 20px; max-width: 600px; width: 100%; max-height: 90vh; overflow: hidden; box-shadow: 0 25px 80px rgba(0,0,0,0.25); display: flex; flex-direction: column;"
+      (click)="$event.stopPropagation()">
+      
+      <!-- Header del formulario -->
+      <div style="padding: 20px 24px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;">
+            <span style="font-size: 22px;">{{ isEditing ? '✏️' : '➕' }}</span>
+          </div>
+          <div>
+            <h2 style="margin: 0; font-size: 18px; font-weight: 700; color: white; letter-spacing: -0.3px;">
+              {{ isEditing ? 'Editar Estudiante' : 'Nuevo Estudiante' }}
+            </h2>
+            <p style="margin: 4px 0 0; font-size: 12px; color: rgba(255,255,255,0.8); font-weight: 500;">
+              {{ isEditing ? 'Actualiza la información del contacto' : 'Registra un nuevo estudiante' }}
+            </p>
+          </div>
+        </div>
+        
+        <button 
+          type="button"
+          (click)="onClose()"
+          style="width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.15); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 18px; transition: all 0.2s;">
+          ✕
+        </button>
+      </div>
+
+      <!-- Contenido del formulario -->
+      <form (ngSubmit)="onSubmit()" style="flex: 1; overflow-y: auto; padding: 24px;">
+        
+        <!-- Sección: Información básica -->
+        <div style="margin-bottom: 24px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+            <span style="font-size: 16px;">🧾</span>
+            <h3 style="margin: 0; font-size: 14px; font-weight: 700; color: #1e293b; text-transform: uppercase; letter-spacing: 0.5px;">
+              Información básica
+            </h3>
+          </div>
+          
+          <!-- Nombre -->
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 8px;">
+              Nombre del estudiante *
+            </label>
+            <input
+              [(ngModel)]="formData.nombre"
+              name="nombre"
+              type="text"
+              placeholder="Ej: Juan Pérez García"
+              style="width: 100%; padding: 12px 16px; font-size: 14px; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 10px; outline: none; box-sizing: border-box; color: #1e293b; font-weight: 500; transition: all 0.2s;"
+              required
+            />
+          </div>
+
+          <!-- Teléfono -->
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 8px;">
+              Teléfono *
+            </label>
+            <input
+              [(ngModel)]="formData.telefono"
+              name="telefono"
+              type="tel"
+              placeholder="Ej: 3001234567"
+              style="width: 100%; padding: 12px 16px; font-size: 14px; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 10px; outline: none; box-sizing: border-box; color: #1e293b; font-weight: 500; font-family: monospace; letter-spacing: 0.5px; transition: all 0.2s;"
+              required
+            />
+          </div>
+
+          <!-- Fecha de terminación del curso -->
+          <div style="margin-bottom: 0;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <label style="display: block; font-size: 12px; font-weight: 600; color: #64748b;">
+                📅 Fecha de terminación del curso
+              </label>
+              @if (formData.fechaTerminacionCurso) {
+                <span [style]="'font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 6px; color: white; background: ' + getDateStatus().color">
+                  {{ getDateStatus().icon }} {{ getDateStatus().status }}
+                </span>
+              }
+            </div>
+            <input
+              [(ngModel)]="formData.fechaTerminacionCurso"
+              name="fechaTerminacionCurso"
+              type="date"
+              [attr.min]="getMinDate()"
+              style="width: 100%; padding: 12px 16px; font-size: 14px; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 10px; outline: none; box-sizing: border-box; color: #1e293b; font-weight: 500; transition: all 0.2s;"
+            />
+            @if (formData.fechaTerminacionCurso && !validateFechaTerminacion()) {
+              <span style="display: block; margin-top: 6px; font-size: 11px; color: #ef4444; font-weight: 600;">
+                ⚠️ La fecha no puede ser anterior a hoy
+              </span>
+            }
+            @if (formData.fechaTerminacionCurso && validateFechaTerminacion()) {
+              <span style="display: block; margin-top: 6px; font-size: 11px; color: #22c55e; font-weight: 600;">
+                ✓ {{ formatDateForDisplay(formData.fechaTerminacionCurso) }}
+              </span>
+            }
+          </div>
+        </div>
+
+        <!-- Sección: Estado operativo -->
+        <div style="margin-bottom: 24px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+            <span style="font-size: 16px;">🎯</span>
+            <h3 style="margin: 0; font-size: 14px; font-weight: 700; color: #1e293b; text-transform: uppercase; letter-spacing: 0.5px;">
+              Estado operativo
+            </h3>
+          </div>
+
+          <!-- Color de estado -->
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 12px;">
+            Color de estado (obligatorio) *
+          </label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+            @for (color of colors; track color.value) {
+              <button
+                type="button"
+                (click)="formData.colorEstado = color.value"
+                [style]="'padding: 12px; border-radius: 10px; text-align: left; cursor: pointer; transition: all 0.2s; ' + 
+                  (formData.colorEstado === color.value 
+                    ? 'border: 2px solid ' + getColorHex(color.value) + '; background: ' + getColorHex(color.value) + '15; box-shadow: 0 4px 12px ' + getColorHex(color.value) + '25;' 
+                    : 'border: 2px solid #e2e8f0; background: #f8fafc;')">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span [style]="'width: 16px; height: 16px; border-radius: 50%; background: ' + getColorHex(color.value) + '; box-shadow: 0 0 8px ' + getColorHex(color.value) + '50;'"></span>
+                  <div>
+                    <span style="font-size: 13px; font-weight: 600; color: #1e293b; display: block;">{{ color.label }}</span>
+                    <span style="font-size: 10px; color: #64748b;">{{ color.description }}</span>
+                  </div>
+                </div>
+              </button>
+            }
+          </div>
+
+          <!-- Checkboxes -->
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Tiene cita -->
+            <label style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; border: 2px solid rgba(245,158,11,0.2); background: rgba(245,158,11,0.05); cursor: pointer; transition: all 0.2s;">
+              <input
+                [(ngModel)]="formData.tieneCita"
+                name="tieneCita"
+                type="checkbox"
+                style="width: 18px; height: 18px; cursor: pointer; accent-color: #f59e0b;"
+              />
+              <span style="font-size: 13px; font-weight: 600; color: #92400e;">📅 Tiene cita programada</span>
+            </label>
+
+            <!-- Es nuevo -->
+            <label style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; border: 2px solid rgba(34,197,94,0.2); background: rgba(34,197,94,0.05); cursor: pointer; transition: all 0.2s;">
+              <input
+                [(ngModel)]="formData.esNuevo"
+                name="esNuevo"
+                type="checkbox"
+                style="width: 18px; height: 18px; cursor: pointer; accent-color: #22c55e;"
+              />
+              <span style="font-size: 13px; font-weight: 600; color: #166534;">✨ Es contacto nuevo</span>
+            </label>
+
+            <!-- Es estudiante -->
+            <label style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; border: 2px solid rgba(59,130,246,0.2); background: rgba(59,130,246,0.05); cursor: pointer; transition: all 0.2s;">
+              <input
+                [(ngModel)]="formData.esEstudiante"
+                name="esEstudiante"
+                type="checkbox"
+                style="width: 18px; height: 18px; cursor: pointer; accent-color: #3b82f6;"
+              />
+              <span style="font-size: 13px; font-weight: 600; color: #1e40af;">🎓 Ya es estudiante</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Sección: Comentarios -->
+        <div style="margin-bottom: 24px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+            <span style="font-size: 16px;">🗒️</span>
+            <h3 style="margin: 0; font-size: 14px; font-weight: 700; color: #1e293b; text-transform: uppercase; letter-spacing: 0.5px;">
+              Comentarios
+            </h3>
+          </div>
+
+          <!-- Agregar comentario -->
+          <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+            <input
+              [(ngModel)]="newComment"
+              name="newComment"
+              type="text"
+              placeholder="Escribe un comentario..."
+              style="flex: 1; padding: 12px 16px; font-size: 14px; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 10px; outline: none; box-sizing: border-box; color: #1e293b; font-weight: 500; transition: all 0.2s;"
+              (keyup.enter)="addComment()"
+            />
+            <button
+              type="button"
+              (click)="addComment()"
+              [disabled]="!newComment.trim()"
+              style="padding: 12px 18px; font-size: 13px; font-weight: 600; color: white; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s; white-space: nowrap;"
+              [style.opacity]="newComment.trim() ? '1' : '0.5'"
+              [style.cursor]="newComment.trim() ? 'pointer' : 'not-allowed'">
+              ➕ Agregar
+            </button>
+          </div>
+
+          <!-- Lista de comentarios -->
+          <div style="max-height: 200px; overflow-y: auto; border-radius: 10px; border: 2px solid #e2e8f0; background: #f8fafc;">
+            @if (formData.comentarios && formData.comentarios.length > 0) {
+              @for (comentario of formData.comentarios; track $index; let i = $index) {
+                <div style="padding: 12px 14px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 12px;">
+                  <div style="width: 8px; height: 8px; border-radius: 50%; background: #6366f1; margin-top: 6px; flex-shrink: 0;"></div>
+                  <div style="flex: 1; min-width: 0;">
+                    <p style="margin: 0 0 4px 0; font-size: 13px; color: #1e293b; line-height: 1.4;">{{ comentario.texto }}</p>
+                    <span style="font-size: 10px; color: #94a3b8;">{{ formatDate(comentario.fecha) }}</span>
+                  </div>
+                  <button
+                    type="button"
+                    (click)="removeComment(i)"
+                    style="background: none; border: none; color: #94a3b8; cursor: pointer; padding: 0; font-size: 14px; transition: all 0.2s;">
+                    ✕
+                  </button>
+                </div>
+              }
+            } @else {
+              <div style="padding: 24px; text-align: center;">
+                <span style="font-size: 24px; display: block; margin-bottom: 8px;">💬</span>
+                <p style="margin: 0; font-size: 13px; color: #94a3b8;">Sin comentarios aún</p>
+              </div>
+            }
+          </div>
+        </div>
+      </form>
+
+      <!-- Footer con botones -->
+      <div style="padding: 16px 24px; border-top: 1px solid #e2e8f0; background: #f8fafc; display: flex; gap: 12px;">
+        @if (isEditing) {
+          <button
+            type="button"
+            (click)="onDelete()"
+            style="padding: 12px 16px; font-size: 13px; font-weight: 600; color: #ef4444; background: rgba(239,68,68,0.1); border: 2px solid rgba(239,68,68,0.2); border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+            🗑️ Eliminar
+          </button>
+        }
+        
+        <button
+          type="button"
+          (click)="onClear()"
+          style="padding: 12px 16px; font-size: 13px; font-weight: 600; color: #64748b; background: white; border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+          🔄 Limpiar
+        </button>
+        
+        <div style="flex: 1;"></div>
+        
+        <button
+          type="button"
+          (click)="onClose()"
+          style="padding: 12px 20px; font-size: 13px; font-weight: 600; color: #64748b; background: white; border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+          Cancelar
+        </button>
+        
+        <button
+          type="button"
+          (click)="onSubmit()"
+          [disabled]="!isFormValid()"
+          style="padding: 12px 24px; font-size: 13px; font-weight: 700; color: white; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(99,102,241,0.3);"
+          [style.opacity]="isFormValid() ? '1' : '0.5'"
+          [style.cursor]="isFormValid() ? 'pointer' : 'not-allowed'">
+          {{ isEditing ? '💾 Guardar cambios' : '✅ Crear estudiante' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
