@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-users-management',
+  selector: 'app-student-profile',
   standalone: true,
   imports: [],
   template: '<div></div>',
-  styleUrl: './users-management.scss',
 })
-export class UsersManagementComponent {}
+export class ContactProfileComponent {}

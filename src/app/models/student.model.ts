@@ -1,35 +1,38 @@
-export type ColorEstado = 'ROJO' | 'AMARILLO' | 'VERDE' | 'AZUL' | 'PURPURA' | 'NARANJA';
+// Categorías disponibles
+export type CategoryType = 'NOVA' | 'Cliente potencial' | 'Plan de alimentación' | 'Plan de ejercicios';
 
-export interface Cita {
-  id?: number;
-  fechaAgendada: string;
-  fechaContacto: string;
-  notas?: string;
+export interface Category {
+  name: CategoryType;
+  label: string;
+  description: string;
 }
 
-export interface Comentario {
-  id?: number;
-  texto: string;
-  fecha: string;
+export interface Note {
+  id: number;
+  text: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface Student {
+export interface Contact {
   id?: number;
   nombre: string;
-  telefono: string;
-  tieneCita: boolean;
-  esNuevo: boolean;
-  esEstudiante: boolean;
-  colorEstado: ColorEstado;
-  comentarios: Comentario[];
-  cita?: Cita;
-  fechaTerminacionCurso?: string;
+  apellido: string;
+  whatsapp: string;
+  email?: string;
+  categorias: CategoryType[];
+  instagram?: string;
+  barrio?: string;
+  ventas?: number;
+  notas?: Note[];
   createdAt?: string;
   updatedAt?: string;
 }
 
-export interface UpcomingAppointment {
-  student: Student;
-  daysUntilAppointment: number;
-  type: 'appointment_today' | 'appointment_soon';
-}
+export const CATEGORIES: Category[] = [
+  { name: 'NOVA', label: 'NOVA', description: 'Categoría NOVA' },
+  { name: 'Cliente potencial', label: 'Cliente potencial', description: 'Potencial cliente' },
+  { name: 'Plan de alimentación', label: 'Plan de alimentación', description: 'Con plan nutricional' },
+  { name: 'Plan de ejercicios', label: 'Plan de ejercicios', description: 'Con plan de ejercicios' }
+];
+

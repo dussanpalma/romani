@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
   imports: [FormsModule],
   templateUrl: './student-search.html',
 })
-export class StudentSearch {
+export class ContactSearch {
   term = '';
 
   @Output() search = new EventEmitter<string>();

@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StudentForm } from './student-form';
+import { ContactForm } from './student-form';
 
 describe('StudentForm', () => {
-  let component: StudentForm;
+  let component: ContactForm;
   let fixture: ComponentFixture<StudentForm>;
 
   beforeEach(async () => {

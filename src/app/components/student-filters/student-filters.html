@@ -23,8 +23,70 @@
     <!-- Separador visual -->
     <div style="width: 1px; height: 20px; background: rgba(0,0,0,0.1);"></div>
 
-    <!-- Etiqueta Atributos -->
-    <span style="font-size: 9px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7;">✨ Atributos</span>
+    <!-- Etiqueta Categorías -->
+    <span style="font-size: 9px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7;">📂 Categorías</span>
+
+    <!-- Botón Contacto Nuevo -->
+    <button
+      (click)="toggleBooleanFilter('esContactoNuevo')"
+      [style]="'display: flex; align-items: center; justify-content: center; padding: 6px 12px; border-radius: 10px; font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; ' + 
+        (activeFilters.esContactoNuevo === true 
+          ? 'background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; border: 1px solid transparent; box-shadow: 0 4px 16px rgba(6,182,212,0.4);' 
+          : activeFilters.esContactoNuevo === false 
+            ? 'background: rgba(71,85,105,0.15); color: #64748b; text-decoration: line-through; border: 1px solid rgba(148,163,184,0.15);' 
+            : 'background: rgba(6,182,212,0.1); color: #0e7490; border: 1px solid rgba(6,182,212,0.3);')"
+      onmouseover="this.style.transform='translateY(-2px)'"
+      onmouseout="this.style.transform='translateY(0)'">
+      🆕 Contacto
+    </button>
+
+    <!-- Botón Interesado -->
+    <button
+      (click)="toggleBooleanFilter('esInteresado')"
+      [style]="'display: flex; align-items: center; justify-content: center; padding: 6px 12px; border-radius: 10px; font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; ' + 
+        (activeFilters.esInteresado === true 
+          ? 'background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: 1px solid transparent; box-shadow: 0 4px 16px rgba(249,115,22,0.4);' 
+          : activeFilters.esInteresado === false 
+            ? 'background: rgba(71,85,105,0.15); color: #64748b; text-decoration: line-through; border: 1px solid rgba(148,163,184,0.15);' 
+            : 'background: rgba(249,115,22,0.1); color: #b45309; border: 1px solid rgba(249,115,22,0.3);')"
+      onmouseover="this.style.transform='translateY(-2px)'"
+      onmouseout="this.style.transform='translateY(0)'">
+      👍 Interesado
+    </button>
+
+    <!-- Botón Nutrición -->
+    <button
+      (click)="toggleBooleanFilter('tieneNutricion')"
+      [style]="'display: flex; align-items: center; justify-content: center; padding: 6px 12px; border-radius: 10px; font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; ' + 
+        (activeFilters.tieneNutricion === true 
+          ? 'background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; border: 1px solid transparent; box-shadow: 0 4px 16px rgba(139,92,246,0.4);' 
+          : activeFilters.tieneNutricion === false 
+            ? 'background: rgba(71,85,105,0.15); color: #64748b; text-decoration: line-through; border: 1px solid rgba(148,163,184,0.15);' 
+            : 'background: rgba(139,92,246,0.1); color: #6d28d9; border: 1px solid rgba(139,92,246,0.3);')"
+      onmouseover="this.style.transform='translateY(-2px)'"
+      onmouseout="this.style.transform='translateY(0)'">
+      🥗 Nutrición
+    </button>
+
+    <!-- Botón Ejercicio -->
+    <button
+      (click)="toggleBooleanFilter('tieneEjercicio')"
+      [style]="'display: flex; align-items: center; justify-content: center; padding: 6px 12px; border-radius: 10px; font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; ' + 
+        (activeFilters.tieneEjercicio === true 
+          ? 'background: linear-gradient(135deg, #ec4899, #db2777); color: white; border: 1px solid transparent; box-shadow: 0 4px 16px rgba(236,72,153,0.4);' 
+          : activeFilters.tieneEjercicio === false 
+            ? 'background: rgba(71,85,105,0.15); color: #64748b; text-decoration: line-through; border: 1px solid rgba(148,163,184,0.15);' 
+            : 'background: rgba(236,72,153,0.1); color: #9d174d; border: 1px solid rgba(236,72,153,0.3);')"
+      onmouseover="this.style.transform='translateY(-2px)'"
+      onmouseout="this.style.transform='translateY(0)'">
+      💪 Ejercicio
+    </button>
+
+    <!-- Separador visual -->
+    <div style="width: 1px; height: 20px; background: rgba(0,0,0,0.1);"></div>
+
+    <!-- Etiqueta Atributos Legacy -->
+    <span style="font-size: 9px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7;">📌 Más</span>
 
     <!-- Botón Cita -->
     <button
@@ -80,4 +142,3 @@
     }
   </div>
 </div>
-

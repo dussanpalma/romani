@@ -1,0 +1,19 @@
+<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="500" height="500" fill="none"/>
+  
+  <!-- Main Logo Symbol (Stylized A) -->
+  <g>
+    <!-- Left stroke of A -->
+    <path d="M 150 450 Q 180 250 230 100" stroke="#FFFFFF" stroke-width="45" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Right stroke of A -->
+    <path d="M 370 450 Q 340 250 270 100" stroke="#FFFFFF" stroke-width="45" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Horizontal bar of A -->
+    <line x1="160" y1="300" x2="360" y2="300" stroke="#FFFFFF" stroke-width="40" stroke-linecap="round"/>
+    
+    <!-- Decorative loop/wave -->
+    <path d="M 380 150 Q 420 180 430 250 Q 420 280 380 290" stroke="#FFFFFF" stroke-width="35" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

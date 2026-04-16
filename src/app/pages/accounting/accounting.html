@@ -1,0 +1,149 @@
+<div class="accounting-container">
+  <!-- Header -->
+  <header class="accounting-header">
+    <div class="header-content">
+      <button class="btn-back" (click)="goBack()">←</button>
+      <h1>💰 Contabilidad</h1>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="accounting-content">
+    <!-- Overview Cards -->
+    <div class="overview-cards">
+      <!-- Total Ventas Card -->
+      <div class="card total-card">
+        <div class="card-header">
+          <h2>Total Ventas</h2>
+          <span class="icon">💵</span>
+        </div>
+        <div class="card-body">
+          <p class="amount">{{ formatCurrency(totalVentas) }}</p>
+          <p class="label">En COP</p>
+        </div>
+      </div>
+
+      <!-- Contactos con Ventas Card -->
+      <div class="card contacts-card">
+        <div class="card-header">
+          <h2>Contactos Activos</h2>
+          <span class="icon">👥</span>
+        </div>
+        <div class="card-body">
+          <p class="amount">{{ totalContactosConVentas }}</p>
+          <p class="label">de {{ contacts.length }} ({{ getContactosPercentage() }}%)</p>
+        </div>
+      </div>
+
+      <!-- Promedio por Contacto Card -->
+      <div class="card average-card">
+        <div class="card-header">
+          <h2>Promedio</h2>
+          <span class="icon">📊</span>
+        </div>
+        <div class="card-body">
+          @if (totalContactosConVentas > 0) {
+            <p class="amount">{{ formatCurrency(getPromedioPorContacto()) }}</p>
+          } @else {
+            <p class="amount">--</p>
+          }
+          <p class="label">Por contacto</p>
+        </div>
+      </div>
+
+      <!-- Mayor Venta Card -->
+      @if (maxVentasContact) {
+        <div class="card max-card">
+          <div class="card-header">
+            <h2>Mayor Venta</h2>
+            <span class="icon">🏆</span>
+          </div>
+          <div class="card-body">
+            <p class="amount">{{ formatCurrency(maxVentasContact.ventas || 0) }}</p>
+            <p class="label">{{ maxVentasContact.nombre }} {{ maxVentasContact.apellido }}</p>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Empty State -->
+    @if (totalVentas === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📈</div>
+        <h2>Sin ventas registradas</h2>
+        <p>Actualmente no hay ventas registradas. Comienza a agregar ventas desde los contactos.</p>
+      </div>
+    } @else {
+      <!-- Stats by Category -->
+      <div class="category-section">
+        <h2>📊 Ventas por Categoría</h2>
+        <div class="category-grid">
+          @for (cat of categoryStats; track cat.name) {
+            @if (cat.total > 0) {
+              <div class="category-card">
+                <div class="category-header">
+                  <h3>{{ cat.label }}</h3>
+                  <span class="category-badge">{{ cat.percentage }}%</span>
+                </div>
+                <div class="category-content">
+                  <p class="category-amount">{{ formatCurrency(cat.total) }}</p>
+                  <p class="category-contacts">{{ cat.contacts }} contacto<span *ngIf="cat.contacts !== 1">s</span> activo<span *ngIf="cat.contacts !== 1">s</span></p>
+                  <div class="progress-bar">
+                    <div class="progress-fill" [style.width]="getBarWidth(cat.percentage)"></div>
+                  </div>
+                </div>
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Detalles de Ventas -->
+      <div class="sales-details">
+        <h2>📋 Resumen General</h2>
+        <div class="detail-grid">
+          <div class="detail-card">
+            <span class="detail-icon">💹</span>
+            <span class="detail-label">Total Acumulado</span>
+            <span class="detail-value">{{ formatCurrency(totalVentas) }}</span>
+          </div>
+          <div class="detail-card">
+            <span class="detail-icon">🎯</span>
+            <span class="detail-label">Tasa Conversión</span>
+            <span class="detail-value">{{ getContactosPercentage() }}%</span>
+          </div>
+          <div class="detail-card">
+            <span class="detail-icon">📈</span>
+            <span class="detail-label">Promedio</span>
+            <span class="detail-value">{{ formatCurrency(getPromedioPorContacto()) }}</span>
+          </div>
+          <div class="detail-card">
+            <span class="detail-icon">👤</span>
+            <span class="detail-label">Compradores Activos</span>
+            <span class="detail-value">{{ totalContactosConVentas }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Sellers -->
+      <div class="top-sellers">
+        <h2>🥇 Principales Compradores</h2>
+        <div class="sellers-list">
+          @for (contact of getTopSellers(); track contact.id) {
+            <div class="seller-item">
+              <div class="seller-info">
+                <p class="seller-name">{{ contact.nombre }} {{ contact.apellido }}</p>
+                <div class="seller-categories">
+                  @for (cat of contact.categorias; track cat) {
+                    <span class="cat-badge">{{ cat }}</span>
+                  }
+                </div>
+              </div>
+              <div class="seller-amount">{{ formatCurrency(contact.ventas || 0) }}</div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </main>
+</div>

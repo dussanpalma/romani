@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StudentFilters } from './student-filters';
+import { ContactFilters } from './student-filters';
 
 describe('StudentFilters', () => {
-  let component: StudentFilters;
+  let component: ContactFilters;
   let fixture: ComponentFixture<StudentFilters>;
 
   beforeEach(async () => {

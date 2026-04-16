@@ -165,7 +165,7 @@
             {{ notification.message }}
           </p>
           <p
-            *ngIf="notification.student.comentarios && notification.student.comentarios.length > 0"
+            *ngIf="notification.contact.comentarios && notification.contact.comentarios.length > 0"
             style="
               margin: 0;
               font-size: 11px;
@@ -175,7 +175,7 @@
               white-space: nowrap;
             "
           >
-            Teléfono: {{ notification.student.telefono }}
+            Teléfono: {{ notification.contact.telefono }}
           </p>
         </div>
 

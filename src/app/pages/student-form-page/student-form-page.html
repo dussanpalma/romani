@@ -1,158 +1,146 @@
-<div style="min-height: 100vh; background: #f8fafc; font-family: 'Inter', system-ui, sans-serif;">
-  <!-- Header compacto -->
-  <header style="background: white; border-bottom: 1px solid #e2e8f0; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;">
-    <div style="display: flex; align-items: center; gap: 12px;">
-      <button (click)="onCancel()" style="width: 32px; height: 32px; border-radius: 8px; background: #f1f5f9; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-        <svg style="width: 16px; height: 16px; color: #64748b;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-      </button>
-      <h1 style="margin: 0; font-size: 16px; font-weight: 700; color: #1e293b;">{{ isEditing ? '✏️ Editar' : '➕ Nuevo' }} Estudiante</h1>
+<div class="form-container">
+  <!-- Header -->
+  <header class="form-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="onCancel()">←</button>
+      <h1>{{ isEditing ? '✏️ Editar Contacto' : '➕ Nuevo Contacto' }}</h1>
     </div>
-    <div style="display: flex; gap: 8px;">
+    <div class="header-right">
       @if (isEditing) {
-        <button (click)="onDelete()" style="padding: 8px 12px; font-size: 12px; font-weight: 600; color: #ef4444; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; cursor: pointer;">🗑️ Eliminar</button>
+        <button type="button" class="btn-danger" (click)="onDelete()">🗑️ Eliminar</button>
       }
-      <button (click)="onCancel()" style="padding: 8px 12px; font-size: 12px; font-weight: 600; color: #64748b; background: white; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer;">Cancelar</button>
-      <button (click)="onSubmit()" [disabled]="!isFormValid()" style="padding: 8px 16px; font-size: 12px; font-weight: 700; color: white; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; border-radius: 6px; cursor: pointer;" [style.opacity]="isFormValid() ? '1' : '0.5'">💾 Guardar</button>
+      <button type="button" class="btn-secondary" (click)="onCancel()">Cancelar</button>
+      <button type="button" [disabled]="!isFormValid()" class="btn-primary" (click)="onSubmit()">💾 Guardar</button>
     </div>
   </header>
 
-  <!-- Contenido -->
-  <main style="max-width: 600px; margin: 0 auto; padding: 20px;">
+  <!-- Form Content -->
+  <main class="form-main">
     <form (ngSubmit)="onSubmit()">
-      <!-- Info básica -->
-      <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 16px; margin-bottom: 16px;">
-        <h3 style="margin: 0 0 12px; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">🧾 Información básica</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div>
-            <label style="display: block; font-size: 11px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Nombre *</label>
-            <input [(ngModel)]="formData.nombre" name="nombre" type="text" placeholder="Juan Pérez" style="width: 100%; padding: 10px 12px; font-size: 13px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; box-sizing: border-box;" required />
+      
+      <!-- Basic Information -->
+      <section class="form-section">
+        <h2>Información Básica</h2>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre *</label>
+            <input 
+              [(ngModel)]="formData.nombre" 
+              name="nombre" 
+              type="text" 
+              placeholder="Ej: Juan"
+              required
+            />
           </div>
-          <div>
-            <label style="display: block; font-size: 11px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Teléfono *</label>
-            <input [(ngModel)]="formData.telefono" (change)="validateTelefono()" name="telefono" type="tel" placeholder="3001234567" style="width: 100%; padding: 10px 12px; font-size: 13px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; box-sizing: border-box; font-family: monospace;" required />
-            @if (telefonoError) {
-              <p style="margin: 4px 0 0; font-size: 11px; color: #ef4444; font-weight: 600;">{{ telefonoError }}</p>
-            }
+          <div class="form-group">
+            <label>Apellido *</label>
+            <input 
+              [(ngModel)]="formData.apellido" 
+              name="apellido" 
+              type="text" 
+              placeholder="Ej: García"
+              required
+            />
           </div>
         </div>
-        <div style="margin-top: 12px;">
-          <label style="display: block; font-size: 11px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Fecha de terminación del curso</label>
-          <input [(ngModel)]="formData.fechaTerminacionCurso" name="fechaTerminacionCurso" type="date" style="width: 100%; padding: 10px 12px; font-size: 13px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; box-sizing: border-box;" />
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email *</label>
+            <input 
+              [(ngModel)]="formData.email" 
+              name="email" 
+              type="email" 
+              placeholder="correo@ejemplo.com"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>WhatsApp *</label>
+            <input 
+              [(ngModel)]="formData.whatsapp" 
+              name="whatsapp" 
+              type="tel" 
+              placeholder="Ej: +34612345678"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Instagram</label>
+            <input 
+              [(ngModel)]="formData.instagram" 
+              name="instagram" 
+              type="text" 
+              placeholder="Ej: @usuario_instagram"
+            />
+          </div>
+          <div class="form-group">
+            <label>Barrio</label>
+            <input 
+              [(ngModel)]="formData.barrio" 
+              name="barrio" 
+              type="text" 
+              placeholder="Ej: Centro, Zona Norte"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Sales Information -->
+      <section class="form-section">
+        <h2>💰 Información de Ventas</h2>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Monto Vendido (COP)</label>
+            <input 
+              [(ngModel)]="formData.ventas" 
+              name="ventas" 
+              type="number" 
+              placeholder="Ej: 50000"
+              min="0"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Categories -->
+      <section class="form-section">
+        <h2>Categorías *</h2>
+        <p class="section-help">Selecciona una o varias categorías (mínimo 1 requerida)</p>
+        
+        <div class="categories-list">
+          @for (category of categories; track category.name) {
+            <label class="category-checkbox" [class.active]="isCategorySelected(category.name)">
+              <input 
+                type="checkbox" 
+                [checked]="isCategorySelected(category.name)"
+                (change)="toggleCategory(category.name)"
+              />
+              <span class="checkbox-label">{{ category.label }}</span>
+              <span class="checkbox-description">{{ category.description }}</span>
+            </label>
+          }
+        </div>
+      </section>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        @if (isEditing) {
+          <button type="button" class="btn-secondary" (click)="onClear()">↻ Descartar cambios</button>
+        }
+        <div class="actions-right">
+          <button type="button" class="btn-secondary" (click)="onCancel()">Cancelar</button>
+          <button type="button" [disabled]="!isFormValid()" class="btn-primary" (click)="onSubmit()">
+            {{ isEditing ? '✏️ Actualizar' : '➕ Crear Contacto' }}
+          </button>
         </div>
       </div>
 
-      <!-- Estado -->
-      <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 16px; margin-bottom: 16px;">
-        <h3 style="margin: 0 0 12px; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">🎯 Estado</h3>
-        
-        <!-- Colores en fila -->
-        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-          @for (color of colors; track color.value) {
-            <button type="button" (click)="formData.colorEstado = color.value"
-              [style]="'flex: 1; padding: 8px; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.2s; ' + 
-                (formData.colorEstado === color.value ? 'border: 2px solid ' + getColorHex(color.value) + '; background: ' + getColorHex(color.value) + '15;' : 'border: 1px solid #e2e8f0; background: #fafafa;')">
-              <div [style]="'width: 16px; height: 16px; border-radius: 50%; margin: 0 auto 4px; background: ' + getColorHex(color.value) + ';'"></div>
-              <span style="font-size: 10px; font-weight: 600; color: #374151;">{{ color.label }}</span>
-            </button>
-          }
-        </div>
-        
-        <!-- Checkboxes en fila -->
-        <div style="display: flex; gap: 8px;">
-          <label style="flex: 1; display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(245,158,11,0.3); background: rgba(245,158,11,0.05); cursor: pointer; font-size: 11px; font-weight: 600; color: #92400e;">
-            <input [(ngModel)]="formData.tieneCita" name="tieneCita" (change)="formData.tieneCita && formData.colorEstado === 'AMARILLO' && openAppointmentModal()" type="checkbox" style="accent-color: #f59e0b;" /> 📅 Cita
-          </label>
-          <label style="flex: 1; display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(34,197,94,0.3); background: rgba(34,197,94,0.05); cursor: pointer; font-size: 11px; font-weight: 600; color: #166534;">
-            <input [(ngModel)]="formData.esNuevo" name="esNuevo" type="checkbox" style="accent-color: #22c55e;" /> ✨ Nuevo
-          </label>
-          <label style="flex: 1; display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(59,130,246,0.3); background: rgba(59,130,246,0.05); cursor: pointer; font-size: 11px; font-weight: 600; color: #1e40af;">
-            <input [(ngModel)]="formData.esEstudiante" name="esEstudiante" type="checkbox" style="accent-color: #3b82f6;" /> 🎓 Estudiante
-          </label>
-        </div>
-      </div>
-
-      <!-- Comentarios -->
-      <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 16px;">
-        <h3 style="margin: 0 0 12px; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">🗒️ Comentarios</h3>
-        
-        <!-- Agregar -->
-        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-          <input [(ngModel)]="newComment" name="newComment" type="text" placeholder="Agregar comentario..." (keyup.enter)="addComment()" style="flex: 1; padding: 8px 12px; font-size: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; outline: none;" />
-          <button type="button" (click)="addComment()" [disabled]="!newComment.trim()" style="padding: 8px 12px; font-size: 11px; font-weight: 600; color: white; background: #6366f1; border: none; border-radius: 8px; cursor: pointer;" [style.opacity]="newComment.trim() ? '1' : '0.5'">➕</button>
-        </div>
-        
-        <!-- Lista -->
-        <div style="max-height: 150px; overflow-y: auto; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc;">
-          @if (formData.comentarios && formData.comentarios.length > 0) {
-            @for (comentario of formData.comentarios; track $index; let i = $index) {
-              <div style="padding: 8px 10px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px; font-size: 12px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background: #6366f1; flex-shrink: 0;"></span>
-                <span style="flex: 1; color: #374151;">{{ comentario.texto }}</span>
-                <span style="font-size: 10px; color: #94a3b8;">{{ formatDate(comentario.fecha) }}</span>
-                <button type="button" (click)="removeComment(i)" style="background: none; border: none; color: #94a3b8; cursor: pointer; padding: 0; font-size: 12px;">✕</button>
-              </div>
-            }
-          } @else {
-            <div style="padding: 16px; text-align: center; color: #94a3b8; font-size: 12px;">💬 Sin comentarios</div>
-          }
-        </div>
-      </div>
     </form>
   </main>
-
-  <!-- Modal para agendar cita -->
-  @if (showAppointmentModal) {
-    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(5px);">
-      <div style="background: white; border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); padding: 20px; max-width: 360px; width: 90%; max-height: 90vh; overflow-y: auto;">
-        
-        <h2 style="margin: 0 0 16px; font-size: 16px; font-weight: 700; color: #1e293b; text-align: center;">Agendar Cita</h2>
-
-        <div style="margin-bottom: 14px;">
-          <!-- Fecha -->
-          <div style="margin-bottom: 12px;">
-            <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Fecha</label>
-            <input
-              [(ngModel)]="appointmentDate"
-              type="date"
-              style="width: 100%; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; box-sizing: border-box;">
-          </div>
-
-          <!-- Hora -->
-          <div style="margin-bottom: 12px;">
-            <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Hora</label>
-            <input
-              [(ngModel)]="appointmentTime"
-              type="time"
-              style="width: 100%; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; box-sizing: border-box;">
-          </div>
-
-          <!-- Notas -->
-          <div>
-            <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Notas (Opcional)</label>
-            <textarea
-              [(ngModel)]="appointmentNotes"
-              placeholder="Añade notas sobre esta cita..."
-              style="width: 100%; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; min-height: 60px; box-sizing: border-box; font-family: inherit; resize: vertical;"></textarea>
-          </div>
-        </div>
-
-        <div style="display: flex; gap: 8px;">
-          <button
-            (click)="closeAppointmentModal()"
-            style="flex: 1; padding: 10px; background: #e2e8f0; color: #64748b; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s;"
-            onmouseover="this.style.background='#cbd5e1'"
-            onmouseout="this.style.background='#e2e8f0'">
-            Cancelar
-          </button>
-          <button
-            (click)="onSubmit()"
-            style="flex: 1; padding: 10px; background: rgba(34,197,94,0.9); color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s;"
-            onmouseover="this.style.background='rgba(34,197,94,1)'"
-            onmouseout="this.style.background='rgba(34,197,94,0.9)'">
-            Guardar
-          </button>
-        </div>
-      </div>
-    </div>
-  }
 </div>

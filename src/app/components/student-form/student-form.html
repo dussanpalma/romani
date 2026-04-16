@@ -75,11 +75,11 @@
             />
           </div>
 
-          <!-- Fecha de terminación del curso -->
+          <!-- Fecha de terminación del curso / Fecha de pendiente por llamar -->
           <div style="margin-bottom: 0;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
               <label style="display: block; font-size: 12px; font-weight: 600; color: #64748b;">
-                📅 Fecha de terminación del curso
+                📅 {{ getDateLabel() }}
               </label>
               @if (formData.fechaTerminacionCurso) {
                 <span [style]="'font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 6px; color: white; background: ' + getDateStatus().color">

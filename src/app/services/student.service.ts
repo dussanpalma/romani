@@ -1,102 +1,136 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { Student, Comentario, Cita } from '../models/student.model';
-
-export interface SearchFilters {
-  q?: string;
-  color?: string;
-  tiene_cita?: boolean;
-  es_nuevo?: boolean;
-  es_estudiante?: boolean;
-}
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { Contact, CategoryType } from '../models/student.model';
+import { MOCK_STUDENTS } from '../mocks/student.mocks';
 
 @Injectable({ providedIn: 'root' })
-export class StudentService {
-  private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/students`;
+export class ContactService {
+  private contacts: Contact[] = this.initializeContacts();
 
-  getAll(): Observable<Student[]> {
-    return this.http.get<Student[]>(this.apiUrl);
+  private initializeContacts(): Contact[] {
+    const stored = localStorage.getItem('contacts');
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        return this.getMockContacts();
+      }
+    }
+    const mocks = this.getMockContacts();
+    this.saveToStorage(mocks);
+    return mocks;
   }
 
-  getById(id: number): Observable<Student> {
-    return this.http.get<Student>(`${this.apiUrl}/${id}`);
+  private getMockContacts(): Contact[] {
+    return MOCK_STUDENTS;
   }
 
-  create(student: Omit<Student, 'id'>): Observable<Student> {
-    return this.http.post<Student>(this.apiUrl, student);
+  private saveToStorage(contacts: Contact[]): void {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
   }
 
-  update(id: number, student: Partial<Student>): Observable<Student> {
-    return this.http.put<Student>(`${this.apiUrl}/${id}`, student);
+  getAll(): Observable<Contact[]> {
+    return of(JSON.parse(JSON.stringify(this.contacts)));
   }
 
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  getById(id: number): Observable<Contact | null> {
+    const contact = this.contacts.find(c => c.id === id);
+    return of(contact ? JSON.parse(JSON.stringify(contact)) : null);
   }
 
-  search(filters: SearchFilters): Observable<Student[]> {
-    let params = new HttpParams();
-    if (filters.q) params = params.set('q', filters.q);
-    if (filters.color) params = params.set('color', filters.color);
-    if (filters.tiene_cita !== undefined) params = params.set('tiene_cita', filters.tiene_cita.toString());
-    if (filters.es_nuevo !== undefined) params = params.set('es_nuevo', filters.es_nuevo.toString());
-    if (filters.es_estudiante !== undefined) params = params.set('es_estudiante', filters.es_estudiante.toString());
-    return this.http.get<Student[]>(`${this.apiUrl}/search`, { params });
+  create(contact: Omit<Contact, 'id' | 'createdAt' | 'updatedAt'>): Observable<Contact> {
+    const newId = Math.max(...this.contacts.map(c => c.id || 0), 0) + 1;
+    const now = new Date().toISOString();
+    const newContact: Contact = {
+      ...contact,
+      id: newId,
+      createdAt: now,
+      updatedAt: now
+    };
+    this.contacts.push(newContact);
+    this.saveToStorage(this.contacts);
+    return of(JSON.parse(JSON.stringify(newContact)));
   }
 
-  getComentarios(studentId: number): Observable<Comentario[]> {
-    return this.http.get<Comentario[]>(`${this.apiUrl}/${studentId}/comentarios`);
+  update(id: number, contact: Partial<Contact>): Observable<Contact | null> {
+    const index = this.contacts.findIndex(c => c.id === id);
+    if (index !== -1) {
+      const now = new Date().toISOString();
+      this.contacts[index] = {
+        ...this.contacts[index],
+        ...contact,
+        updatedAt: now
+      };
+      this.saveToStorage(this.contacts);
+      return of(JSON.parse(JSON.stringify(this.contacts[index])));
+    }
+    return of(null);
   }
 
-  addComentario(studentId: number, comentario: Omit<Comentario, 'id'>): Observable<Comentario> {
-    return this.http.post<Comentario>(`${this.apiUrl}/${studentId}/comentarios`, comentario);
+  delete(id: number): Observable<boolean> {
+    const index = this.contacts.findIndex(c => c.id === id);
+    if (index !== -1) {
+      this.contacts.splice(index, 1);
+      this.saveToStorage(this.contacts);
+      return of(true);
+    }
+    return of(false);
   }
 
-  deleteComentario(studentId: number, comentarioId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${studentId}/comentarios/${comentarioId}`);
+  getByCategory(category: CategoryType): Observable<Contact[]> {
+    const filtered = this.contacts.filter(c => c.categorias.includes(category));
+    return of(JSON.parse(JSON.stringify(filtered)));
   }
 
-  getCita(studentId: number): Observable<Cita> {
-    return this.http.get<Cita>(`${this.apiUrl}/${studentId}/cita`);
+  getAllCategories(): Observable<CategoryType[]> {
+    const categories = new Set<CategoryType>();
+    this.contacts.forEach(c => {
+      c.categorias.forEach(cat => categories.add(cat));
+    });
+    return of(Array.from(categories));
   }
 
-  createOrUpdateCita(studentId: number, cita: Omit<Cita, 'id'>): Observable<Cita> {
-    return this.http.post<Cita>(`${this.apiUrl}/${studentId}/cita`, cita);
+  addNote(contactId: number, noteText: string): Observable<Contact | null> {
+    const contact = this.contacts.find(c => c.id === contactId);
+    if (contact) {
+      const now = new Date().toISOString();
+      const newNoteId = Math.max(...(contact.notas?.map(n => n.id || 0) || [0]), 0) + 1;
+      const newNote = { id: newNoteId, text: noteText, createdAt: now, updatedAt: now };
+      if (!contact.notas) contact.notas = [];
+      contact.notas.push(newNote);
+      contact.updatedAt = now;
+      this.saveToStorage(this.contacts);
+      return of(JSON.parse(JSON.stringify(contact)));
+    }
+    return of(null);
   }
 
-  deleteCita(studentId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${studentId}/cita`);
+  updateNote(contactId: number, noteId: number, newText: string): Observable<Contact | null> {
+    const contact = this.contacts.find(c => c.id === contactId);
+    if (contact && contact.notas) {
+      const note = contact.notas.find(n => n.id === noteId);
+      if (note) {
+        note.text = newText;
+        note.updatedAt = new Date().toISOString();
+        contact.updatedAt = new Date().toISOString();
+        this.saveToStorage(this.contacts);
+        return of(JSON.parse(JSON.stringify(contact)));
+      }
+    }
+    return of(null);
   }
 
-  createUser(userData: { nombreUsuario: string; contraseña: string }): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/users`, userData);
-  }
-
-  getAllUsers(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/users`);
-  }
-
-  getUserById(id: number): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/users/${id}`);
-  }
-
-  updateUser(id: number, userData: any): Observable<any> {
-    return this.http.put(`${environment.apiUrl}/users/${id}`, userData);
-  }
-
-  deleteUser(id: number): Observable<void> {
-    return this.http.delete<void>(`${environment.apiUrl}/users/${id}`);
-  }
-
-  /**
-   * Obtiene estudiantes cuya fecha de terminación del curso está próxima (próximos N días)
-   * @param days Número de días a futuro (default: 7)
-   */
-  getStudentsWithUpcomingCourseEnd(days: number = 7): Observable<Student[]> {
-    let params = new HttpParams().set('days', days.toString());
-    return this.http.get<Student[]>(`${this.apiUrl}/upcoming-course-end`, { params });
+  deleteNote(contactId: number, noteId: number): Observable<Contact | null> {
+    const contact = this.contacts.find(c => c.id === contactId);
+    if (contact && contact.notas) {
+      const index = contact.notas.findIndex(n => n.id === noteId);
+      if (index !== -1) {
+        contact.notas.splice(index, 1);
+        contact.updatedAt = new Date().toISOString();
+        this.saveToStorage(this.contacts);
+        return of(JSON.parse(JSON.stringify(contact)));
+      }
+    }
+    return of(null);
   }
 }

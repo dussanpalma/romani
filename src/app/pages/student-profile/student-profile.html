@@ -1,217 +1,157 @@
-<div style="min-height: 100vh; background: #ffffff; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
-  
+<div class="container">
   <!-- Header -->
-  <header style="background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.95) 100%); border-bottom: 1px solid rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 50; backdrop-filter: blur(20px);">
-    <div style="max-width: 1000px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between;">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <button
-          (click)="goBack()"
-          style="width: 32px; height: 32px; border-radius: 8px; background: rgba(99,102,241,0.1); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 16px;"
-          onmouseover="this.style.background='rgba(99,102,241,0.2)'"
-          onmouseout="this.style.background='rgba(99,102,241,0.1)'">
-          ←
-        </button>
-        <div>
-          <h1 style="margin: 0; font-size: 16px; font-weight: 700; color: #1e293b; letter-spacing: -0.5px;">Ver Cita</h1>
-        </div>
-      </div>
+  <header class="header">
+    <div class="header-content">
+      <button class="btn-back" (click)="goBack()">←</button>
+      @if (contact) {
+        <h1>{{ contact.nombre }} {{ contact.apellido }}</h1>
+      }
     </div>
   </header>
 
-  @if (student) {
-    <main style="max-width: 1000px; margin: 0 auto; padding: 12px;">
-      
-      <!-- Card Principal del Estudiante -->
-      <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); margin-bottom: 12px;">
-        
-        <!-- Header del Card -->
-        <div [style]="'background: linear-gradient(135deg, ' + getColorHex(student.colorEstado) + ' 0%, ' + getColorHex(student.colorEstado) + 'cc 100%); padding: 16px; display: flex; align-items: center; gap: 12px;'">
-          <div style="width: 52px; height: 52px; border-radius: 12px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; font-weight: 700; flex-shrink: 0; backdrop-filter: blur(10px);">
-            {{ student.nombre.charAt(0).toUpperCase() }}
-          </div>
-          <div style="min-width: 0; flex: 1;">
-            <h2 style="margin: 0 0 2px; font-size: 16px; font-weight: 700; color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ student.nombre }}</h2>
-            <p style="margin: 0; font-size: 12px; color: rgba(255,255,255,0.9); display: flex; align-items: center; gap: 6px;">
-              <span>📞</span> {{ student.telefono }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Contenido del Card -->
-        <div style="padding: 16px;">
+  @if (contact) {
+    <main class="main-content">
+      <!-- Contact Info Card -->
+      <div class="info-card">
+        <div class="info-section">
+          <h2>Información del Contacto</h2>
           
-          <!-- Info de la Cita -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
-            
-            <!-- Fecha Agendada -->
-            <div style="padding: 12px; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 10px;">
-              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-                <span style="font-size: 16px;">📅</span>
-                <span style="font-size: 10px; font-weight: 700; color: #b45309; text-transform: uppercase; letter-spacing: 0.5px;">Cita</span>
-              </div>
-              <p style="margin: 0; font-size: 13px; font-weight: 700; color: #1e293b; line-height: 1.3;">{{ formatDate(student.cita?.fechaAgendada) }}</p>
-              @if (getDaysUntilAppointment() > 0) {
-                <p style="margin: 4px 0 0; font-size: 11px; color: #16a34a; font-weight: 600;">
-                  ⏰ En {{ getDaysUntilAppointment() }} día(s)
-                </p>
-              } @else if (getDaysUntilAppointment() === 0) {
-                <p style="margin: 4px 0 0; font-size: 11px; color: #dc2626; font-weight: 600;">
-                  🔔 ¡Es hoy!
-                </p>
+          <div class="info-row">
+            <span class="label">Nombre:</span>
+            <span class="value">{{ contact.nombre }} {{ contact.apellido }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Email:</span>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              @if (contact.email) {
+                <a [href]="'mailto:' + contact.email" class="value-link">{{ contact.email }}</a>
+                <button class="btn-calendar" (click)="openGoogleCalendar()" title="Agendar en Google Calendar">📅 Google Calendar</button>
+                <button class="btn-calendar" (click)="openCalendly()" title="Agendar en Calendly">📆 Calendly</button>
               } @else {
-                <p style="margin: 4px 0 0; font-size: 11px; color: #dc2626; font-weight: 600;">
-                  ⚠️ Pasada
-                </p>
+                <span class="value">No disponible</span>
               }
             </div>
-
-            <!-- Fecha de Contacto -->
-            <div style="padding: 12px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: 10px;">
-              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-                <span style="font-size: 16px;">📱</span>
-                <span style="font-size: 10px; font-weight: 700; color: #1e40af; text-transform: uppercase; letter-spacing: 0.5px;">Contacto</span>
-              </div>
-              <p style="margin: 0; font-size: 13px; font-weight: 700; color: #1e293b; line-height: 1.3;">{{ formatDate(student.cita?.fechaContacto) }}</p>
-              <p style="margin: 4px 0 0; font-size: 11px; color: #64748b; font-weight: 500;">
-                Primera comunicación
-              </p>
-            </div>
           </div>
-          
-          <!-- Notas -->
-          @if (student.cita?.notas) {
-            <div style="margin-bottom: 12px; padding: 12px; background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.3); border-radius: 10px;">
-              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
-                <span style="font-size: 16px;">📝</span>
-                <span style="font-size: 10px; font-weight: 700; color: #6b21a8; text-transform: uppercase; letter-spacing: 0.5px;">Notas</span>
-              </div>
-              <p style="margin: 0; font-size: 12px; line-height: 1.4; color: #1e293b;">{{ student.cita?.notas }}</p>
-            </div>
-          }
 
-          <!-- Comentarios -->
-          <div style="margin-top: 14px;">
-            <h3 style="margin: 0 0 10px; font-size: 12px; font-weight: 700; color: #1e293b; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
-              <span>💬</span> Comentarios ({{ student.comentarios.length }})
-            </h3>
-
-            @if (student.comentarios && student.comentarios.length > 0) {
-              <div style="margin-bottom: 10px;">
-                @for (comentario of student.comentarios; let i = $index; track i) {
-                  <div 
-                    (click)="expandedComments.has(i) ? expandedComments.delete(i) : expandedComments.add(i)"
-                    style="padding: 10px; background: #f1f5f9; border-radius: 8px; border-left: 3px solid rgba(99,102,241,0.5); cursor: pointer; transition: all 0.2s; margin-bottom: 8px;"
-                    [style.background]="expandedComments.has(i) ? '#e0e7ff' : '#f1f5f9'"
-                    onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'"
-                    onmouseout="this.style.boxShadow='none'">
-                    <div style="display: flex; align-items: start; justify-content: space-between; gap: 8px;">
-                      <div style="flex: 1; min-width: 0;">
-                        <p style="margin: 0 0 4px; font-size: 11px; font-weight: 700; color: #64748b;">
-                          {{ formatShortDate(comentario.fecha) }} · {{ formatTime(comentario.fecha) }}
-                        </p>
-                        <p [style]="expandedComments.has(i) ? 'margin: 0; font-size: 12px; color: #1e293b; line-height: 1.4; word-break: break-word;' : 'margin: 0; font-size: 12px; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'">
-                          {{ comentario.texto }}
-                        </p>
-                      </div>
-                      <span style="font-size: 14px; flex-shrink: 0;">{{ expandedComments.has(i) ? '▼' : '▶' }}</span>
-                    </div>
-                  </div>
-                }
-              </div>
-            } @else {
-              <p style="margin: 0; font-size: 12px; color: #94a3b8; font-style: italic;">No hay comentarios aún</p>
-            }
-
-            <div style="margin-top: 10px; display: flex; gap: 8px;">
-              <input
-                [(ngModel)]="newComment"
-                type="text"
-                placeholder="Añadir comentario..."
-                style="flex: 1; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; background: white; transition: border-color 0.2s;">
-              <button
-                (click)="addComment()"
-                [disabled]="!newComment.trim()"
-                style="padding: 8px 12px; background: rgba(99,102,241,0.9); color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
-                [style.opacity]="newComment.trim() ? '1' : '0.5'"
-                [style.cursor]="newComment.trim() ? 'pointer' : 'not-allowed'">
-                +
+          <div class="info-row">
+            <span class="label">WhatsApp:</span>
+            <div class="whatsapp-group">
+              <a [href]="'https://wa.me/' + contact.whatsapp.replace(/\D/g, '')" target="_blank" class="value-link">
+                {{ contact.whatsapp }}
+              </a>
+              <button class="btn-whatsapp" (click)="sendWhatsApp()" title="Enviar mensaje por WhatsApp">
+                💬 Enviar Mensaje
               </button>
             </div>
           </div>
+
+          <div class="info-row">
+            <span class="label">Instagram:</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              @if (contact.instagram) {
+                <a [href]="getInstagramUrl(contact.instagram)" target="_blank" class="value-link">
+                  @{{ contact.instagram }}
+                </a>
+              } @else {
+                <span class="value">No disponible</span>
+              }
+            </div>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Barrio:</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              @if (contact.barrio) {
+                <span class="value">{{ contact.barrio }}</span>
+              } @else {
+                <span class="value">No disponible</span>
+              }
+            </div>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Categorías:</span>
+            <div class="categories">
+              @for (cat of contact.categorias; track cat) {
+                <span class="category-badge">{{ cat }}</span>
+              }
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Botón Reagendar -->
-      <div style="display: flex; gap: 10px;">
-        <button
-          (click)="openRescheduleModal()"
-          [disabled]="!student.cita"
-          style="flex: 1; padding: 10px 16px; background: rgba(99,102,241,0.9); color: white; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;"
-          [style.opacity]="student.cita ? '1' : '0.5'"
-          [style.cursor]="student.cita ? 'pointer' : 'not-allowed'"
-          onmouseover="this.style.background='rgba(99,102,241,1)'"
-          onmouseout="this.style.background='rgba(99,102,241,0.9)'">
-          <span>📅</span> Reagendar
-        </button>
-      </div>
+      <!-- Notes Section -->
+      <div class="notes-card">
+        <div class="notes-header">
+          <h2>Notas</h2>
+          <button class="btn-add-note" (click)="toggleAddNoteForm()">
+            @if (showAddNoteForm) { ✕ Cancelar } @else { + Nueva Nota }
+          </button>
+        </div>
 
+        <!-- Add Note Form -->
+        @if (showAddNoteForm) {
+          <div class="add-note-form">
+            <textarea 
+              [(ngModel)]="newNoteText"
+              placeholder="Escribe una nueva nota..."
+              class="note-textarea">
+            </textarea>
+            <div class="form-actions">
+              <button class="btn-secondary" (click)="toggleAddNoteForm()">Cancelar</button>
+              <button class="btn-primary" (click)="addNote()" [disabled]="!newNoteText.trim()">
+                Agregar Nota
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Notes List -->
+        <div class="notes-list">
+          @if (contact.notas && contact.notas.length > 0) {
+            @for (note of contact.notas; track note.id) {
+              <div class="note-item">
+                @if (editingNoteId === note.id) {
+                  <!-- Edit Mode -->
+                  <div class="note-edit">
+                    <textarea 
+                      [(ngModel)]="editingNoteText"
+                      class="note-textarea-edit">
+                    </textarea>
+                    <div class="form-actions">
+                      <button class="btn-secondary" (click)="cancelEditNote()">Cancelar</button>
+                      <button class="btn-primary" (click)="saveEditNote()">Guardar</button>
+                    </div>
+                  </div>
+                } @else {
+                  <!-- View Mode -->
+                  <div class="note-content">
+                    <p class="note-text">{{ note.text }}</p>
+                    <div class="note-meta">
+                      <span class="note-date">{{ formatDate(note.updatedAt) }}</span>
+                    </div>
+                  </div>
+                  <div class="note-actions">
+                    <button class="btn-icon" (click)="startEditNote(note)" title="Editar">✎️</button>
+                    <button class="btn-icon btn-danger" (click)="deleteNote(note.id)" title="Eliminar">🗑️</button>
+                  </div>
+                }
+              </div>
+            }
+          } @else {
+            <div class="empty-notes">
+              <p>No hay notas aún. ¡Agrega una ahora!</p>
+            </div>
+          }
+        </div>
+      </div>
+    </main>
+  } @else {
+    <main class="main-content">
+      <div class="loading">
+        <p>Cargando contacto...</p>
+      </div>
     </main>
   }
-
-  <!-- Modal Reagendar -->
-  @if (showRescheduleModal) {
-    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(5px);">
-      <div style="background: white; border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); padding: 20px; max-width: 360px; width: 90%; max-height: 90vh; overflow-y: auto;">
-        
-        <h2 style="margin: 0 0 16px; font-size: 16px; font-weight: 700; color: #1e293b; text-align: center;">Reagendar Cita</h2>
-
-        <div style="margin-bottom: 14px;">
-          <!-- Fecha -->
-          <div style="margin-bottom: 12px;">
-            <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Fecha</label>
-            <input
-              [(ngModel)]="newDate"
-              type="date"
-              style="width: 100%; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; box-sizing: border-box;">
-          </div>
-
-          <!-- Hora -->
-          <div style="margin-bottom: 12px;">
-            <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Hora</label>
-            <input
-              [(ngModel)]="newTime"
-              type="time"
-              style="width: 100%; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; box-sizing: border-box;">
-          </div>
-
-          <!-- Notas -->
-          <div>
-            <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Notas (Opcional)</label>
-            <textarea
-              [(ngModel)]="newNotes"
-              placeholder="Añade notas sobre esta cita..."
-              style="width: 100%; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; min-height: 60px; box-sizing: border-box; font-family: inherit; resize: vertical;"></textarea>
-          </div>
-        </div>
-
-        <div style="display: flex; gap: 8px;">
-          <button
-            (click)="closeRescheduleModal()"
-            style="flex: 1; padding: 10px; background: #e2e8f0; color: #64748b; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s;"
-            onmouseover="this.style.background='#cbd5e1'"
-            onmouseout="this.style.background='#e2e8f0'">
-            Cancelar
-          </button>
-          <button
-            (click)="rescheduleAppointment()"
-            style="flex: 1; padding: 10px; background: rgba(34,197,94,0.9); color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s;"
-            onmouseover="this.style.background='rgba(34,197,94,1)'"
-            onmouseout="this.style.background='rgba(34,197,94,0.9)'">
-            Guardar
-          </button>
-        </div>
-      </div>
-    </div>
-  }
-
 </div>

@@ -1,9 +1,538 @@
-/* Student Form Page Styles */
-:host {
-  display: block;
+// ==================== VARIABLES ====================
+$primary-gradient: linear-gradient(135deg, #e875a8 0%, #d46b98 100%);
+$primary-color: #e875a8;
+$primary-dark: #d46b98;
+$secondary-color: #64748b;
+$danger-color: #ef4444;
+$border-light: rgba(0, 0, 0, 0.08);
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+// ==================== FORM PAGE ====================
+.form-page {
+  min-height: 100%;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e8ecf1 100%);
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 32px;
+
+  @media (max-width: 768px) {
+    padding-bottom: 24px;
+  }
+
+  @media (max-width: 480px) {
+    padding-bottom: 16px;
+  }
 }
 
-input:focus {
-  border-color: #6366f1 !important;
-  background: white !important;
+// ==================== PAGE HEADER ====================
+.form-page-header {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
+  border-bottom: 1px solid $border-light;
+  padding: 20px 16px;
+  position: sticky;
+  top: 70px;
+  z-index: 20;
+  box-shadow: $shadow-sm;
+
+  @media (max-width: 768px) {
+    padding: 16px 12px;
+    top: 62px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px 10px;
+    top: 58px;
+  }
+}
+
+.header-top {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 480px) {
+    gap: 12px;
+  }
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+
+  @media (max-width: 480px) {
+    gap: 12px;
+  }
+}
+
+.btn-back {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid $border-light;
+  background: white;
+  border-radius: 8px;
+  color: #1e293b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba(232, 117, 168, 0.08);
+    border-color: $primary-color;
+  }
+
+  @media (max-width: 480px) {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+.title-content {
+  min-width: 0;
+
+  h1 {
+    margin: 0 0 2px 0;
+    font-size: 24px;
+    font-weight: 800;
+    color: #1e293b;
+    background: $primary-gradient;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+
+    @media (max-width: 768px) {
+      font-size: 20px;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 18px;
+    }
+  }
+
+  .subtitle {
+    margin: 0;
+    font-size: 12px;
+    color: $secondary-color;
+    font-weight: 500;
+
+    @media (max-width: 480px) {
+      font-size: 11px;
+    }
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+
+  @media (max-width: 480px) {
+    gap: 8px;
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    padding: 9px 14px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px 10px;
+    font-size: 11px;
+    gap: 4px;
+
+    .btn-text {
+      display: none;
+    }
+
+    &.btn-primary,
+    &.btn-secondary,
+    &.btn-outline {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+    }
+  }
+}
+
+.btn-primary {
+  background: $primary-gradient;
+  color: white;
+  box-shadow: 0 4px 12px rgba(232, 117, 168, 0.3);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(232, 117, 168, 0.4);
+  }
+}
+
+.btn-secondary {
+  background: rgba(232, 117, 168, 0.1);
+  color: $primary-color;
+  border: 1px solid rgba(232, 117, 168, 0.3);
+
+  &:hover {
+    background: rgba(232, 117, 168, 0.15);
+    border-color: $primary-color;
+  }
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #1e293b;
+
+  &.danger {
+    color: $danger-color;
+    border-color: $danger-color;
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.08);
+    }
+  }
+}
+
+// ==================== FORM PAGE MAIN ====================
+.form-page-main {
+  flex: 1;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 32px 16px;
+
+  @media (max-width: 768px) {
+    padding: 24px 12px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 16px 10px;
+  }
+}
+
+// ==================== CONTACT FORM ====================
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    gap: 20px;
+  }
+
+  @media (max-width: 480px) {
+    gap: 16px;
+  }
+}
+
+// ==================== FORM SECTION ====================
+.form-section {
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: $shadow-sm;
+  animation: slideInUp 0.3s ease;
+
+  @media (max-width: 768px) {
+    padding: 18px;
+    gap: 14px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 14px;
+    gap: 12px;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+
+  @media (max-width: 480px) {
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .section-icon {
+    color: $primary-color;
+    flex-shrink: 0;
+
+    &.sales-icon {
+      color: #22c55e;
+    }
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    color: #1e293b;
+
+    @media (max-width: 480px) {
+      font-size: 16px;
+    }
+  }
+}
+
+.section-help {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 12px;
+  color: $secondary-color;
+  font-weight: 500;
+
+  @media (max-width: 480px) {
+    font-size: 11px;
+    gap: 6px;
+  }
+}
+
+// ==================== FORM GRID ====================
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+// ==================== FORM GROUP ====================
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: 0.3px;
+
+    @media (max-width: 480px) {
+      font-size: 12px;
+      gap: 4px;
+    }
+
+    svg {
+      flex-shrink: 0;
+      color: $primary-color;
+    }
+  }
+
+  input {
+    padding: 11px 14px;
+    border: 2px solid $border-light;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    background: white;
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba(232, 117, 168, 0.1);
+    }
+
+    &:disabled {
+      background: #f8fafc;
+      color: $secondary-color;
+      cursor: not-allowed;
+    }
+
+    &::placeholder {
+      color: $secondary-color;
+    }
+
+    @media (max-width: 480px) {
+      padding: 10px 12px;
+      font-size: 16px; // Prevents zoom on iOS
+    }
+  }
+}
+
+// ==================== CATEGORIES GRID ====================
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+// ==================== CATEGORY CHECKBOX ====================
+.category-checkbox {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 2px solid $border-light;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    background: rgba(232, 117, 168, 0.02);
+  }
+
+  &.active {
+    border-color: $primary-color;
+    background: rgba(232, 117, 168, 0.08);
+
+    input {
+      border-color: $primary-color;
+      background: $primary-gradient;
+    }
+  }
+
+  input {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    cursor: pointer;
+    accent-color: $primary-color;
+    flex-shrink: 0;
+  }
+
+  .checkbox-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .checkbox-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+  }
+
+  .checkbox-description {
+    font-size: 11px;
+    color: $secondary-color;
+    font-weight: 500;
+  }
+
+  @media (max-width: 480px) {
+    padding: 10px 12px;
+    gap: 8px;
+
+    .checkbox-label {
+      font-size: 12px;
+    }
+
+    .checkbox-description {
+      font-size: 10px;
+    }
+  }
+}
+
+// ==================== FORM ACTIONS ====================
+.form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 8px;
+  border-top: 1px solid $border-light;
+
+  @media (max-width: 768px) {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 480px) {
+    gap: 10px;
+  }
+}
+
+.actions-right {
+  display: flex;
+  gap: 12px;
+
+  @media (max-width: 480px) {
+    gap: 10px;
+    width: 100%;
+    justify-content: flex-end;
+  }
 }

@@ -32,44 +32,18 @@ export class LoginComponent {
     this.errorMessage = '';
     this.hasError = false;
 
-    console.log('Iniciando login con usuario:', this.username);
-
     this.auth.login(this.username, this.password).subscribe({
       next: (response) => {
         this.isLoading = false;
+        this.hasError = false;
+        this.router.navigate(['/contacts']);
         this.cdr.markForCheck();
-        console.log('Login response:', response);
-        
-        if (response.activo && response.id) {
-          this.auth.saveUser(this.username, response);
-          this.hasError = false;
-          this.router.navigate(['/students']);
-        } else {
-          this.errorMessage = response.mensaje || 'Usuario o contraseña inválidos';
-          this.hasError = true;
-          this.cdr.markForCheck();
-        }
       },
       error: (error) => {
         this.isLoading = false;
         this.hasError = true;
+        this.errorMessage = 'Usuario o contraseña inválidos';
         this.cdr.markForCheck();
-        
-        console.log('Login error - full error object:', error);
-        console.log('Error type:', typeof error);
-        console.log('Error error prop:', error?.error);
-        
-        // Try to get the message from the backend error response
-        if (error?.error?.message) {
-          this.errorMessage = error.error.message;
-        } else if (error?.message) {
-          this.errorMessage = error.message;
-        } else {
-          this.errorMessage = 'Usuario o contraseña inválidos';
-        }
-        
-        this.cdr.markForCheck();
-        console.log('Final error message:', this.errorMessage);
       }
     });
   }
