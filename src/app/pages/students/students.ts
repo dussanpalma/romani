@@ -104,6 +104,10 @@ export class ContactsComponent implements OnInit {
     this.router.navigate(['/accounting']);
   }
 
+  goToSettings(): void {
+    this.router.navigate(['/settings']);
+  }
+
   onLogout(): void {
     this.auth.logout();
     this.router.navigate(['/login']);

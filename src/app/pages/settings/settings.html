@@ -1,0 +1,93 @@
+<div class="container">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="header-actions">
+        <button class="btn-back" (click)="goBack()" title="Volver">
+          ←
+        </button>
+        <h1>Configuración</h1>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="settings-grid">
+      <!-- Backup Section -->
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="card-icon">📥</div>
+          <div class="card-title">
+            <h2>Descargar Backup</h2>
+            <p>Guarda todos tus contactos en tu dispositivo</p>
+          </div>
+        </div>
+        <div class="card-content">
+          <p class="description">
+            Descarga un archivo JSON con todos tus contactos. Útil para hacer backup o cambiar de dispositivo.
+          </p>
+          <button class="btn-action btn-download" (click)="exportContacts()">
+            Descargar Contactos
+          </button>
+        </div>
+      </div>
+
+      <!-- Restore Section -->
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="card-icon">📤</div>
+          <div class="card-title">
+            <h2>Restaurar Backup</h2>
+            <p>Carga tus contactos desde un archivo anterior</p>
+          </div>
+        </div>
+        <div class="card-content">
+          <p class="description">
+            Carga un archivo de backup que hayas descargado anteriormente. Reemplazará todos tus contactos actuales.
+          </p>
+          <input 
+            #fileInput 
+            type="file" 
+            accept=".json" 
+            (change)="onFileSelected($event)"
+            style="display: none"
+            class="hidden-input"
+          >
+          <button class="btn-action btn-upload" (click)="importContacts()">
+            Seleccionar Archivo
+          </button>
+        </div>
+      </div>
+
+      <!-- Storage Info Section -->
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="card-icon">💾</div>
+          <div class="card-title">
+            <h2>Almacenamiento</h2>
+            <p>Información sobre tus datos guardados</p>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="info-box">
+            <div class="info-item">
+              <span class="label">Total de Contactos:</span>
+              <span class="value">{{ contacts.length }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Espacio Usado:</span>
+              <span class="value">{{ storageSize }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Motor de Almacenamiento:</span>
+              <span class="value">IndexedDB + localStorage</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Danger Zone -->
+
+    </div>
+  </main>
+</div>

@@ -30,9 +30,10 @@ export interface Contact {
 }
 
 export const CATEGORIES: Category[] = [
-  { name: 'NOVA', label: 'NOVA', description: 'Categoría NOVA' },
-  { name: 'Cliente potencial', label: 'Cliente potencial', description: 'Potencial cliente' },
-  { name: 'Plan de alimentación', label: 'Plan de alimentación', description: 'Con plan nutricional' },
-  { name: 'Plan de ejercicios', label: 'Plan de ejercicios', description: 'Con plan de ejercicios' }
+  { name: 'NOVA', label: 'Nova', description: 'Categoría NOVA' },
+  { name: 'Plan de alimentación', label: 'Nutrición', description: 'Con plan nutricional' },
+  { name: 'Plan de ejercicios', label: 'Entrenamiento', description: 'Con plan de ejercicios' },
+  { name: 'Cliente potencial', label: 'Cliente potencial', description: 'Potencial cliente' }
+
 ];
 

@@ -6,6 +6,7 @@ import { ContactFormPageComponent } from './pages/student-form-page/student-form
 import { CreateUserComponent } from './pages/create-user/create-user';
 import { UsersManagementComponent } from './pages/users-management/users-management';
 import { AccountingComponent } from './pages/accounting/accounting';
+import { SettingsComponent } from './pages/settings/settings';
 import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
@@ -16,6 +17,7 @@ export const routes: Routes = [
   { path: 'contacts', component: ContactsComponent, canActivate: [authGuard] },
   { path: 'contact/:id', component: ContactProfileComponent, canActivate: [authGuard] },
   { path: 'accounting', component: AccountingComponent, canActivate: [authGuard] },
+  { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
   { path: 'users/new', component: CreateUserComponent, canActivate: [authGuard] },
   { path: 'users', component: UsersManagementComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: 'contacts' }
