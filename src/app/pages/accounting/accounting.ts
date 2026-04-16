@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ContactService } from '../../services/student.service';
@@ -29,7 +29,8 @@ export class AccountingComponent implements OnInit {
 
   constructor(
     private contactService: ContactService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -37,10 +38,16 @@ export class AccountingComponent implements OnInit {
   }
 
   loadVentas(): void {
-    this.contactService.getAll().subscribe(contacts => {
-      this.contacts = contacts;
-      this.calculateTotals();
-      this.calculateCategoryStats();
+    this.contactService.getAll().subscribe({
+      next: (contacts) => {
+        this.contacts = contacts;
+        this.calculateTotals();
+        this.calculateCategoryStats();
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error cargando contactos:', error);
+      }
     });
   }
 

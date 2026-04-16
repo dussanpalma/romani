@@ -1,4 +1,12 @@
-// Animación para el dropdown menu
+// ==================== VARIABLES ====================
+$primary-pink: #ec4899;
+$primary-pink-dark: #db2777;
+$text-dark: #111827;
+$text-light: #6b7280;
+$border-color: #f0f0f0;
+$shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+// ==================== ANIMATIONS ====================
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -10,10 +18,594 @@
   }
 }
 
+// ==================== RESET & BASE ====================
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 :host {
   ::ng-deep {
     [style*="animation: slideDown"] {
       animation: slideDown 0.2s ease;
+    }
+  }
+}
+
+// ==================== CONTAINER ====================
+.container {
+  width: 100%;
+  min-height: 100vh;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+}
+
+// ==================== HEADER ====================
+.header {
+  background: white;
+  border-bottom: 1px solid $border-color;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 16px 20px;
+
+  @media (max-width: 768px) {
+    padding: 12px 16px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+  }
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    gap: 16px;
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: $text-dark;
+    letter-spacing: -0.5px;
+
+    @media (max-width: 480px) {
+      font-size: 20px;
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: 12px;
+    color: $text-light;
+    font-weight: 500;
+  }
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+  background: $primary-pink;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+
+  @media (max-width: 480px) {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    gap: 8px;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    gap: 6px;
+  }
+}
+
+.stats {
+  display: flex;
+  gap: 12px;
+
+  @media (max-width: 480px) {
+    gap: 8px;
+    order: 3;
+    width: 100%;
+  }
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  background: transparent;
+  border-radius: 6px;
+  min-width: 60px;
+
+  .stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: $text-light;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: $primary-pink;
+
+    @media (max-width: 480px) {
+      font-size: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 4px 8px;
+
+    .stat-label {
+      font-size: 9px;
+    }
+
+    .stat-value {
+      font-size: 16px;
+    }
+  }
+}
+
+// ==================== BUTTONS ====================
+.btn-primary,
+.btn-secondary,
+.btn-logout {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px 12px;
+    font-size: 11px;
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.btn-primary {
+  background: $primary-pink;
+  color: white;
+
+  &:hover {
+    background: $primary-pink-dark;
+  }
+}
+
+.btn-secondary {
+  background: white;
+  color: $primary-pink;
+  border: 1px solid $primary-pink;
+
+  &:hover {
+    background: $primary-pink;
+    color: white;
+  }
+}
+
+.btn-logout {
+  background: white;
+  color: #ef4444;
+  border: 1px solid #fecaca;
+
+  &:hover {
+    background: #fecaca;
+  }
+}
+
+// ==================== MAIN CONTENT ====================
+.main-content {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 24px 20px;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+  }
+}
+
+// ==================== SEARCH SECTION ====================
+.search-section {
+  margin-bottom: 20px;
+
+  @media (max-width: 480px) {
+    margin-bottom: 16px;
+  }
+}
+
+.search-input {
+  width: 100%;
+  padding: 11px 14px;
+  font-size: 14px;
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  background: white;
+  font-family: inherit;
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-pink;
+  }
+
+  &::placeholder {
+    color: $text-light;
+  }
+
+  @media (max-width: 480px) {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+
+// ==================== CATEGORIES SECTION ====================
+.categories-section {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid $border-color;
+
+  @media (max-width: 480px) {
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    gap: 6px;
+  }
+}
+
+.category-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: white;
+  color: $text-light;
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: $primary-pink;
+    color: $primary-pink;
+  }
+
+  &.active {
+    background: $primary-pink;
+    color: white;
+    border-color: $primary-pink;
+  }
+
+  .count {
+    opacity: 0.7;
+    font-size: 11px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 6px 10px;
+    font-size: 11px;
+    gap: 4px;
+  }
+}
+
+// ==================== CONTACTS SECTION ====================
+.contacts-section {
+  width: 100%;
+}
+
+.contacts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+// ==================== CONTACT CARD ====================
+.contact-card {
+  background: white;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $primary-pink;
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.08);
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+    gap: 8px;
+  }
+}
+
+.contact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: $text-dark;
+    flex: 1;
+
+    @media (max-width: 480px) {
+      font-size: 15px;
+    }
+  }
+}
+
+.contact-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn-icon {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  background: #f3f4f6;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $primary-pink;
+    color: white;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &.btn-danger {
+    &:hover {
+      background: #ef4444;
+      color: white;
+    }
+  }
+
+  @media (max-width: 480px) {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+}
+
+// ==================== CONTACT INFO ====================
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 0;
+}
+
+.info-row {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  padding: 4px 0;
+  font-size: 12px;
+
+  @media (max-width: 480px) {
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .label {
+    font-weight: 600;
+    color: $text-light;
+    min-width: 60px;
+    flex-shrink: 0;
+  }
+
+  .value {
+    flex: 1;
+    min-width: 0;
+    color: $text-dark;
+    word-break: break-word;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $primary-pink;
+    }
+  }
+
+  &.sales-row {
+    .label {
+      color: #16a34a;
+    }
+
+    .sales-value {
+      color: #16a34a;
+      font-weight: 700;
+    }
+  }
+}
+
+// ==================== CATEGORIES LIST ====================
+.categories-list {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  padding: 4px 0;
+  padding-top: 6px;
+  border-top: 1px solid $border-color;
+
+  @media (max-width: 480px) {
+    gap: 3px;
+  }
+}
+
+.category-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  background: #f3f4f6;
+  color: $text-light;
+  border: none;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $primary-pink;
+    color: white;
+  }
+
+  @media (max-width: 480px) {
+    padding: 2px 6px;
+    font-size: 9px;
+  }
+}
+
+// ==================== VIEW BUTTON ====================
+.btn-view {
+  width: 100%;
+  padding: 8px 12px;
+  background: #f3f4f6;
+  color: $primary-pink;
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 2px;
+
+  &:hover {
+    background: $primary-pink;
+    color: white;
+    border-color: $primary-pink;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  @media (max-width: 480px) {
+    padding: 7px 10px;
+    font-size: 11px;
+  }
+}
+
+// ==================== EMPTY STATE ====================
+.empty-state {
+  grid-column: 1 / -1;
+  padding: 40px 24px;
+  text-align: center;
+  background: white;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: $text-light;
+    font-weight: 500;
+  }
+
+  @media (max-width: 480px) {
+    padding: 30px 16px;
+
+    p {
+      font-size: 13px;
     }
   }
 }

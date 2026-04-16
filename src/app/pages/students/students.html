@@ -14,20 +14,12 @@
       
       <div class="header-actions">
         <div class="stats">
-          <div class="stat">
-            <span class="stat-label">Total</span>
-            <span class="stat-value">{{ all.length }}</span>
-          </div>
-          <div class="stat">
-            <span class="stat-label">Mostrados</span>
-            <span class="stat-value">{{ getDisplayedContacts().length }}</span>
-          </div>
         </div>
         <button class="btn-primary" (click)="createNewContact()">
-          ➕ Nuevo Contacto
+           Nuevo Contacto
         </button>
         <button class="btn-secondary" (click)="goToAccounting()" title="Ver contabilidad">
-          💰 Contabilidad
+          Contabilidad
         </button>
         <button class="btn-logout" (click)="onLogout()">
           Salir
@@ -115,7 +107,7 @@
                 }
                 @if (contact.ventas && contact.ventas > 0) {
                   <div class="info-row sales-row">
-                    <span class="label">💰 Vendido:</span>
+                    <span class="label">Vendido:</span>
                     <span class="value sales-value">${{ (contact.ventas | number:'1.0-0') }}</span>
                   </div>
                 }

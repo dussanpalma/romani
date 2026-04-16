@@ -1,136 +1,262 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, from, BehaviorSubject } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { Contact, CategoryType } from '../models/student.model';
 import { MOCK_STUDENTS } from '../mocks/student.mocks';
+import { StorageService } from './storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class ContactService {
-  private contacts: Contact[] = this.initializeContacts();
+  private contacts$ = new BehaviorSubject<Contact[]>([]);
+  private initialized = false;
 
-  private initializeContacts(): Contact[] {
-    const stored = localStorage.getItem('contacts');
-    if (stored) {
-      try {
-        return JSON.parse(stored);
-      } catch (e) {
-        return this.getMockContacts();
+  constructor(private storageService: StorageService) {
+    this.initializeContacts();
+  }
+
+  private async initializeContacts(): Promise<void> {
+    try {
+      let contacts = await this.storageService.getContacts();
+      
+      if (contacts.length === 0) {
+        // Si no hay contactos guardados, usar mocks
+        contacts = this.getMockContacts();
+        await this.storageService.saveContacts(contacts);
       }
+      
+      this.contacts$.next(contacts);
+      this.initialized = true;
+    } catch (error) {
+      console.error('Error inicializando contactos:', error);
+      // En caso de error, usar mocks
+      const mocks = this.getMockContacts();
+      this.contacts$.next(mocks);
+      this.initialized = true;
     }
-    const mocks = this.getMockContacts();
-    this.saveToStorage(mocks);
-    return mocks;
   }
 
   private getMockContacts(): Contact[] {
     return MOCK_STUDENTS;
   }
 
-  private saveToStorage(contacts: Contact[]): void {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
+  private waitForInitialization(): Promise<void> {
+    return new Promise(resolve => {
+      if (this.initialized) {
+        resolve();
+      } else {
+        const interval = setInterval(() => {
+          if (this.initialized) {
+            clearInterval(interval);
+            resolve();
+          }
+        }, 100);
+      }
+    });
   }
 
   getAll(): Observable<Contact[]> {
-    return of(JSON.parse(JSON.stringify(this.contacts)));
+    return from(this.waitForInitialization()).pipe(
+      switchMap(() => this.contacts$.asObservable()),
+      map(contacts => JSON.parse(JSON.stringify(contacts)))
+    );
   }
 
   getById(id: number): Observable<Contact | null> {
-    const contact = this.contacts.find(c => c.id === id);
-    return of(contact ? JSON.parse(JSON.stringify(contact)) : null);
+    return this.contacts$.asObservable().pipe(
+      map(contacts => {
+        const contact = contacts.find(c => c.id === id);
+        return contact ? JSON.parse(JSON.stringify(contact)) : null;
+      })
+    );
   }
 
   create(contact: Omit<Contact, 'id' | 'createdAt' | 'updatedAt'>): Observable<Contact> {
-    const newId = Math.max(...this.contacts.map(c => c.id || 0), 0) + 1;
-    const now = new Date().toISOString();
-    const newContact: Contact = {
-      ...contact,
-      id: newId,
-      createdAt: now,
-      updatedAt: now
-    };
-    this.contacts.push(newContact);
-    this.saveToStorage(this.contacts);
-    return of(JSON.parse(JSON.stringify(newContact)));
+    return from(this.waitForInitialization()).pipe(
+      switchMap(() => {
+        const currentContacts = this.contacts$.getValue();
+        const newId = Math.max(...currentContacts.map(c => c.id || 0), 0) + 1;
+        const now = new Date().toISOString();
+        const newContact: Contact = {
+          ...contact,
+          id: newId,
+          createdAt: now,
+          updatedAt: now
+        };
+        
+        const updated = [...currentContacts, newContact];
+        this.contacts$.next(updated);
+        return from(this.storageService.saveContacts(updated)).pipe(
+          map(() => JSON.parse(JSON.stringify(newContact)))
+        );
+      })
+    );
   }
 
   update(id: number, contact: Partial<Contact>): Observable<Contact | null> {
-    const index = this.contacts.findIndex(c => c.id === id);
-    if (index !== -1) {
-      const now = new Date().toISOString();
-      this.contacts[index] = {
-        ...this.contacts[index],
-        ...contact,
-        updatedAt: now
-      };
-      this.saveToStorage(this.contacts);
-      return of(JSON.parse(JSON.stringify(this.contacts[index])));
-    }
-    return of(null);
+    return from(this.waitForInitialization()).pipe(
+      switchMap(() => {
+        const currentContacts = this.contacts$.getValue();
+        const index = currentContacts.findIndex(c => c.id === id);
+        
+        if (index === -1) {
+          return of(null);
+        }
+
+        const now = new Date().toISOString();
+        const updated = {
+          ...currentContacts[index],
+          ...contact,
+          updatedAt: now
+        };
+
+        const newContacts = [...currentContacts];
+        newContacts[index] = updated;
+        this.contacts$.next(newContacts);
+
+        return from(this.storageService.saveContacts(newContacts)).pipe(
+          map(() => JSON.parse(JSON.stringify(updated)))
+        );
+      })
+    );
   }
 
   delete(id: number): Observable<boolean> {
-    const index = this.contacts.findIndex(c => c.id === id);
-    if (index !== -1) {
-      this.contacts.splice(index, 1);
-      this.saveToStorage(this.contacts);
-      return of(true);
-    }
-    return of(false);
+    return from(this.waitForInitialization()).pipe(
+      switchMap(() => {
+        const currentContacts = this.contacts$.getValue();
+        const index = currentContacts.findIndex(c => c.id === id);
+        
+        if (index === -1) {
+          return of(false);
+        }
+
+        const newContacts = currentContacts.filter(c => c.id !== id);
+        this.contacts$.next(newContacts);
+
+        return from(this.storageService.saveContacts(newContacts)).pipe(
+          map(() => true)
+        );
+      })
+    );
   }
 
   getByCategory(category: CategoryType): Observable<Contact[]> {
-    const filtered = this.contacts.filter(c => c.categorias.includes(category));
-    return of(JSON.parse(JSON.stringify(filtered)));
+    return this.contacts$.asObservable().pipe(
+      map(contacts => {
+        const filtered = contacts.filter(c => c.categorias.includes(category));
+        return JSON.parse(JSON.stringify(filtered));
+      })
+    );
   }
 
   getAllCategories(): Observable<CategoryType[]> {
-    const categories = new Set<CategoryType>();
-    this.contacts.forEach(c => {
-      c.categorias.forEach(cat => categories.add(cat));
-    });
-    return of(Array.from(categories));
+    return this.contacts$.asObservable().pipe(
+      map(contacts => {
+        const categories = new Set<CategoryType>();
+        contacts.forEach(c => {
+          c.categorias.forEach(cat => categories.add(cat));
+        });
+        return Array.from(categories);
+      })
+    );
   }
 
   addNote(contactId: number, noteText: string): Observable<Contact | null> {
-    const contact = this.contacts.find(c => c.id === contactId);
-    if (contact) {
-      const now = new Date().toISOString();
-      const newNoteId = Math.max(...(contact.notas?.map(n => n.id || 0) || [0]), 0) + 1;
-      const newNote = { id: newNoteId, text: noteText, createdAt: now, updatedAt: now };
-      if (!contact.notas) contact.notas = [];
-      contact.notas.push(newNote);
-      contact.updatedAt = now;
-      this.saveToStorage(this.contacts);
-      return of(JSON.parse(JSON.stringify(contact)));
-    }
-    return of(null);
+    return from(this.waitForInitialization()).pipe(
+      switchMap(() => {
+        const currentContacts = this.contacts$.getValue();
+        const contact = currentContacts.find(c => c.id === contactId);
+        
+        if (!contact) {
+          return of(null);
+        }
+
+        const now = new Date().toISOString();
+        const newNoteId = Math.max(...(contact.notas?.map(n => n.id || 0) || [0]), 0) + 1;
+        const newNote = { id: newNoteId, text: noteText, createdAt: now, updatedAt: now };
+        
+        if (!contact.notas) contact.notas = [];
+        contact.notas.push(newNote);
+        contact.updatedAt = now;
+
+        const newContacts = currentContacts.map(c => c.id === contactId ? contact : c);
+        this.contacts$.next(newContacts);
+
+        return from(this.storageService.saveContacts(newContacts)).pipe(
+          map(() => JSON.parse(JSON.stringify(contact)))
+        );
+      })
+    );
   }
 
   updateNote(contactId: number, noteId: number, newText: string): Observable<Contact | null> {
-    const contact = this.contacts.find(c => c.id === contactId);
-    if (contact && contact.notas) {
-      const note = contact.notas.find(n => n.id === noteId);
-      if (note) {
+    return from(this.waitForInitialization()).pipe(
+      switchMap(() => {
+        const currentContacts = this.contacts$.getValue();
+        const contact = currentContacts.find(c => c.id === contactId);
+        
+        if (!contact || !contact.notas) {
+          return of(null);
+        }
+
+        const note = contact.notas.find(n => n.id === noteId);
+        if (!note) {
+          return of(null);
+        }
+
         note.text = newText;
         note.updatedAt = new Date().toISOString();
         contact.updatedAt = new Date().toISOString();
-        this.saveToStorage(this.contacts);
-        return of(JSON.parse(JSON.stringify(contact)));
-      }
-    }
-    return of(null);
+
+        const newContacts = currentContacts.map(c => c.id === contactId ? contact : c);
+        this.contacts$.next(newContacts);
+
+        return from(this.storageService.saveContacts(newContacts)).pipe(
+          map(() => JSON.parse(JSON.stringify(contact)))
+        );
+      })
+    );
   }
 
   deleteNote(contactId: number, noteId: number): Observable<Contact | null> {
-    const contact = this.contacts.find(c => c.id === contactId);
-    if (contact && contact.notas) {
-      const index = contact.notas.findIndex(n => n.id === noteId);
-      if (index !== -1) {
-        contact.notas.splice(index, 1);
+    return from(this.waitForInitialization()).pipe(
+      switchMap(() => {
+        const currentContacts = this.contacts$.getValue();
+        const contact = currentContacts.find(c => c.id === contactId);
+        
+        if (!contact || !contact.notas) {
+          return of(null);
+        }
+
+        contact.notas = contact.notas.filter(n => n.id !== noteId);
         contact.updatedAt = new Date().toISOString();
-        this.saveToStorage(this.contacts);
-        return of(JSON.parse(JSON.stringify(contact)));
-      }
-    }
-    return of(null);
+
+        const newContacts = currentContacts.map(c => c.id === contactId ? contact : c);
+        this.contacts$.next(newContacts);
+
+        return from(this.storageService.saveContacts(newContacts)).pipe(
+          map(() => JSON.parse(JSON.stringify(contact)))
+        );
+      })
+    );
+  }
+
+  // Métodos para importar/exportar
+  exportContacts(): Observable<string> {
+    return this.contacts$.asObservable().pipe(
+      map(contacts => this.storageService.exportContacts(contacts))
+    );
+  }
+
+  downloadBackup(): Observable<void> {
+    return this.contacts$.asObservable().pipe(
+      map(contacts => {
+        this.storageService.downloadContactsAsJSON(contacts);
+      })
+    );
+  }
+
+  async importContactsFromJSON(jsonString: string): Promise<Contact[]> {
+    return await this.storageService.importContactsFromJSON(jsonString);
   }
 }
